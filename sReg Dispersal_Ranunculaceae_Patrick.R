@@ -26,6 +26,7 @@ extentraster <- raster(ext=extent.rst,nrows=79,ncols=56)
 
 # plot distribution of exemplary species
 mtb.rst <- rasterize(mtb.wgs84,extentraster,field="Acon_nape")
+
 plot(mtb.rst)
 plot(mtb.wgs84, add=TRUE)
 
@@ -145,10 +146,25 @@ distances.geo <- spDists(gridcells.coords, gridcells.coords, longlat = TRUE)
 rownames(distances.geo) <- gridcells
 colnames(distances.geo) <- gridcells
 
-for (i in 1:nrow(species)){
-#for (i in 1:5){
+suit.rst.stack <- lapply(species$New_species_name, function(x) rasterize(mtb.wgs84.suit,extentraster,field=as.character(x)))
+suit.rst.stack <- stack(suit.rst.stack, layers= as.character(species$Abbreviation))
+save(suit.rst.stack, file="suit_rst_stack.RData")
 
-spec.rst <- rasterize(mtb.wgs84.suit,extentraster,field=species$New_species_name[i])
+occ.rst.stack <- lapply(species$Abbreviation, function(x) rasterize(mtb.wgs84,extentraster,field=as.character(x)))
+occ.rst.stack <- stack(occ.rst.stack, layers=as.character(species$Abbreviation))
+save(occ.rst.stack, file="occ_rst_stack.RData")
+
+dispersal.ability <- species$LDD
+names(dispersal.ability) <- species$Abbreviation
+save(dispersal.ability, file = "dispersal_ability.RData")
+
+
+#for (i in 1:nrow(species)){
+for (i in 1:5){
+i=1
+
+spec.rst <- rasterize(mtb.wgs84.suit,extentraster,field=as.character(species$New_species_name[i]))
+#plot(spec.rst)
 
 # replace NAs by 0
 spec.rst[is.na(spec.rst)] <- 1/100
@@ -611,7 +627,7 @@ pool.env.beals <- pool.list[[8]] # "env.beals"
 
 
 # choose species pool grid cell: middle? TK 2520
-pool <- t(pool["2520",]) # Göttingen
+pool <- t(pool["2520",]) # G?ttingen
 pool <- pool[order(pool,decreasing=TRUE)]
 names(pool) <- c(1:length(pool))
 
@@ -635,7 +651,7 @@ savePlot("plots//PMF_CDF_comb.rst.cap.modelsuit.pdf",type="pdf")
 
 
 # choose species pool grid cell: middle? TK 2520
-pool.disp <- t(pool.disp["2520",]) # Göttingen
+pool.disp <- t(pool.disp["2520",]) # G?ttingen
 pool.disp <- pool.disp[order(pool.disp,decreasing=TRUE)]
 names(pool.disp) <- c(1:length(pool.disp))
 
@@ -658,7 +674,7 @@ savePlot("plots//PMF_CDF_dispersal.geo.pdf",type="pdf")
 
 
 # choose species pool grid cell: middle? TK 2520
-pool.env <- t(pool.env["2520",]) # Göttingen
+pool.env <- t(pool.env["2520",]) # G?ttingen
 pool.env <- pool.env[order(pool.env,decreasing=TRUE)]
 names(pool.env) <- c(1:length(pool.env))
 
@@ -680,7 +696,7 @@ savePlot("plots//PMF_CDF_env.modelsuit.pdf",type="pdf")
 
 
 # choose species pool grid cell: middle? TK 2520
-pool.env.beals <- t(pool.env.beals["2520",]) # Göttingen
+pool.env.beals <- t(pool.env.beals["2520",]) # G?ttingen
 pool.env.beals <- pool.env.beals[order(pool.env.beals,decreasing=TRUE)]
 names(pool.env.beals) <- c(1:length(pool.env.beals))
 
@@ -712,7 +728,7 @@ par(mfrow=c(3,3),mar=c(4,2.5,2.5,0.5),oma=c(0,2,0,0))
 
 
 # choose species pool grid cell: middle? TK 2520
-pool <- t(pool["2520",]) # Göttingen
+pool <- t(pool["2520",]) # G?ttingen
 pool <- pool[order(pool,decreasing=TRUE)]
 names(pool) <- c(1:length(pool))
 
@@ -732,7 +748,7 @@ sum(pool)
 
 
 # choose species pool grid cell: middle? TK 2520
-pool.disp <- t(pool.disp["2520",]) # Göttingen
+pool.disp <- t(pool.disp["2520",]) # G?ttingen
 pool.disp <- pool.disp[order(pool.disp,decreasing=TRUE)]
 names(pool.disp) <- c(1:length(pool.disp))
 
@@ -750,7 +766,7 @@ sum(pool.disp)
 
 
 # choose species pool grid cell: middle? TK 2520
-pool.env <- t(pool.env["2520",]) # Göttingen
+pool.env <- t(pool.env["2520",]) # G?ttingen
 pool.env <- pool.env[order(pool.env,decreasing=TRUE)]
 names(pool.env) <- c(1:length(pool.env))
 
