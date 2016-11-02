@@ -2,7 +2,7 @@ load("dispersal_ability.RData")
 load("occ_rst_stack.RData")
 load("suit_rst_stack.RData")
 
-library(raster); library(gdistance)
+library(sp);library(raster); library(gdistance)
 
 
 ##############################################
@@ -81,8 +81,9 @@ disp_pool <- function(occurrence.surfaces, disp.ability=NULL, cost.surfaces=NULL
 
 par(mfrow=c(2,2))
 
-disp.rst.stack <- disp_pool(occurrence.surfaces = occ.rst.stack[[1:5]])
+disp.rst.stack <- disp_pool(occurrence.surfaces = occ.rst.stack)
 plot(disp.rst.stack[[5]])
+save(disp.rst.stack,file="disp_rst_stack.RData")
 
 disp.rst.stack <- disp_pool(occurrence.surfaces = occ.rst.stack[[1:5]], cost.surfaces=suit.rst.stack[[1:5]])
 plot(disp.rst.stack[[5]])
