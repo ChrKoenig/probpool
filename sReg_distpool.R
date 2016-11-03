@@ -104,6 +104,7 @@ disp.rst.stack <- disp_pool(occurrence.surfaces = occ.rst.stack[[1:5]], disp.abi
 plot(disp.rst.stack[[5]])
 
 
+plot(suit.rst.stack[[5]])
 
 
 load("occ_rst_stack.RData")
@@ -152,8 +153,8 @@ bio_pool <- function(occurrence.surfaces, int.matrix) {
 
 bio.rst.stack <- bio_pool(occurrence.surfaces, int.matrix)
 
-save(bio.rst.stack, file="bio.rst.stack.RData")
-  
+save(bio.rst.stack, file="bio_rst_stack.RData")
+
   
 plot(occ.rst.stack[[1]])
 plot(suit.rst.stack[[1]])
