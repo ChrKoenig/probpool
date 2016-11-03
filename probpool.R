@@ -25,7 +25,7 @@ is.valid.probpool = function(object){
     }
   })
   # Check dimensions
-  pool.dims = sapply(object@pools, dim)
+  pool.dims = matrix(sapply(object@pools, dim))
   if(length(unique(pool.dims[1,])) != 1 | length(unique(pool.dims[2,])) != 1){
     errors = c(errors, "All pools need to have the same dimensions")
   }
