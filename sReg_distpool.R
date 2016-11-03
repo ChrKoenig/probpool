@@ -2,8 +2,6 @@ load("dispersal_ability.RData")
 load("occ_rst_stack.RData")
 load("suit_rst_stack.RData")
 
-install.packages("gdistance")
-
 library(sp);library(raster); library(gdistance)
 
 
@@ -142,10 +140,10 @@ bio_pool <- function(occurrence.surfaces, int.matrix) {
     interactions.x <- t(sapply(1:nrow(occurrences), function(y) occurrences[y,]*int.matrix[,x]))
     interactions.x <- (rowMeans(interactions.x)+1)/2
   
-    interaction.x.rst <- occurrence.surfaces[[x]]
-    interaction.x.rst[!is.na(interactions.x.rst)] <- interactions.x
+    interactions.x.rst <- occurrence.surfaces[[x]]
+    interactions.x.rst[!is.na(interactions.x.rst)] <- interactions.x
   
-    return(interaction.x.rst)
+    return(interactions.x.rst)
   })
 
   interactions <- stack(interactions)      
