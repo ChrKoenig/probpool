@@ -118,33 +118,52 @@ interactions <- matrix(runif(min = -1, max = 1, n = 51^2),nrow = 51, ncol = 51)
 colnames(interactions) <- names(dispersal.ability)
 rownames(interactions) <- names(dispersal.ability)
 diag(interactions) <- 0
-
+int.matrix <- interactions
 
 occurrence.surfaces <- suit.rst.stack*disp.rst.stack
-int.matrix <- interactions
+
 # occurence.surfaces needs to be a raster stack including rasters of species occurances or abundances with values of 0 for absences and values > 0 for occurances. Values wil be scaled to range from 0 to 1
 # or the disp.pool, the env.pool or the product of both
 
+# int.matrix is a species by species matrix (may be asymmetric) with interactions assumed to be directed from the species in the row to the species in the colums
+
 bio_pool <- function(occurrence.surfaces, int.matrix) {
+
+  occurrences <- values(occurrence.surfaces)
+  occurrences <- occurrences[complete.cases(occurrences),]
   
-  x=1 #Art
-  y=1 # cell
+  # multiply the incoming interactions of each species x (columns in int.matrix)
+  # with the occurrence/probability of all other species for the given site y
+  interactions <- lapply(1:dim(occurrence.surfaces)[3], function(x) {
+    
+    interactions.x <- t(sapply(1:nrow(occurrences), function(y) occurrences[y,]*int.matrix[,x]))
+    interactions.x <- (rowMeans(interactions.x)+1)/2
+  
+    interaction.x.rst <- occurrence.surfaces[[x]]
+    interaction.x.rst[!is.na(interactions.x.rst)] <- interactions.x
+  
+    return(interaction.x.rst)
+  })
+
+  interactions <- stack(interactions,layers=names(occurrence.surfaces))      
+
+  return(interactions)
+}
+
+bio.rst.stack <- bio_pool(occurrence.surfaces, int.matrix)
+
+save(bio.rst.stack, file="bio.rst.stack.RData")
   
   
+plot(occ.rst.stack[[1]])
+plot(suit.rst.stack[[1]])
+plot(disp.rst.stack[[1]])
+plot(bio.rst.stack[[1]])
   
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+plot(suit.rst.stack[[1]]*disp.rst.stack[[1]]*interactions[[1]])
+
+
+
   
 
       
