@@ -2,6 +2,8 @@ load("dispersal_ability.RData")
 load("occ_rst_stack.RData")
 load("suit_rst_stack.RData")
 
+install.packages("gdistance")
+
 library(sp);library(raster); library(gdistance)
 
 
