@@ -6,10 +6,10 @@ setClass("probpool",
          slots = c(env.pool = "Raster",
                    dist.pool = "Raster",
                    bio.pool = "Raster",
-                   PSI.env = "numeric",
-                   PSI.dist = "numeric",
-                   PSI.bio = "numeric",
-                   PSI.total = "numeric"))
+                   PSI.env = "Raster",
+                   PSI.dist = "Raster",
+                   PSI.bio = "Raster",
+                   PSI.total = "Raster"))
 
 # Constructor function
 probpool = function(env.pool = NA, dist.pool = NA, bio.pool = NA){
@@ -24,15 +24,18 @@ probpool = function(env.pool = NA, dist.pool = NA, bio.pool = NA){
   # fill 
   args[is.na(args)] = 1
   
+  #
+  PSI.env = sum(args$env.pool)
+  PSI.dist = sum(args$dist.pool)
+  PSI.bio = sum(args$bio.pool)
+  PSI.total = sum(PSI.env, PSI.dist, PSI.bio)
   new("probpool", 
       env.pool = args$env.pool, 
-      dist.pool = NA, 
+      dist.pool = args$dist.pool, 
       bio.pool = args$bio.pool,
-      PSI.env = 1,
-      PSI.dist = 1,
-      PSI.bio = 1,
-      PSI.total = 1
+      PSI.env = PSI.env,
+      PSI.dist = PSI.dist,
+      PSI.bio = PSI.bio,
+      PSI.total = PSI.total
   )
 }
-
-#PSI = Reduce(f = "*", c(sum(values(env.pool), na.rm = T), sum(values(dist.pool), na.rm = T), sum(values(bio.pool), na.rm = T))
