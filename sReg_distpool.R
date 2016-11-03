@@ -29,13 +29,22 @@ calcD = function(occupancy, distance, k, method = "negexp")
 }
 
 
+# occurence.surfaces needs to be a raster stack including rasters of species occurances or abundances with values of 0 for absences and values > 0 for occurances. Abundances are not considered though.
+
+# disp.ability needs to be a vector of dispersal abilities. Scaling range? Larger values = higher dispersal abilities
+
+# cond.surfaces needs to be a raster stack including rasters of conductance values between 0 and one
+# NAs will be replaced by 0 and 0s will be replaced by small value; set variable for this?
 
 
-disp_pool <- function(occurrence.surfaces, disp.ability=NULL, cost.surfaces=NULL) {
+
+
+
+disp_pool <- function(occurrence.surfaces, disp.ability=NULL, cond.surfaces=NULL) {
   
   occurrences <- rasterToPoints(occurrence.surfaces)
   
-  if (is.null(cost.surfaces)){
+  if (is.null(cond.surfaces)){
     
     distances <- spDists(occurrences[,c(1:2)], occurrences[,c(1:2)], longlat = TRUE)
     
@@ -50,14 +59,14 @@ disp_pool <- function(occurrence.surfaces, disp.ability=NULL, cost.surfaces=NULL
   } else {
     
     # replace NAs by 0
-    cost.surfaces[is.na(cost.surfaces)] <- 1/100
-    # truncation: replace NAs by 0
-    cost.surfaces[cost.surfaces<1/100] <- 1/100
+    cond.surfaces[is.na(cond.surfaces)] <- 1/100
+    # truncation: replace <1/100 by 0                                   
+    cond.surfaces[cond.surfaces<1/100] <- 1/100
     
     dispersal <- lapply(1:dim(occurrence.surfaces)[3], function(x) {
       
       # create transition raster
-      spec.trans <- transition(cost.surfaces[[x]], mean, 8)
+      spec.trans <- transition(cond.surfaces[[x]], mean, 8)
       # geocorrection
       spec.trans <- geoCorrection(spec.trans, type="c")
       
@@ -85,18 +94,57 @@ disp.rst.stack <- disp_pool(occurrence.surfaces = occ.rst.stack)
 plot(disp.rst.stack[[5]])
 save(disp.rst.stack,file="disp_rst_stack.RData")
 
-disp.rst.stack <- disp_pool(occurrence.surfaces = occ.rst.stack[[1:5]], cost.surfaces=suit.rst.stack[[1:5]])
+disp.rst.stack <- disp_pool(occurrence.surfaces = occ.rst.stack[[1:5]], cond.surfaces=suit.rst.stack[[1:5]])
 plot(disp.rst.stack[[5]])
 
 disp.rst.stack <- disp_pool(occurrence.surfaces = occ.rst.stack[[1:5]], disp.ability=dispersal.ability[1:5])
 plot(disp.rst.stack[[5]])
 
-disp.rst.stack <- disp_pool(occurrence.surfaces = occ.rst.stack[[1:5]], disp.ability=dispersal.ability[1:5], cost.surfaces=suit.rst.stack[[1:5]])
+disp.rst.stack <- disp_pool(occurrence.surfaces = occ.rst.stack[[1:5]], disp.ability=dispersal.ability[1:5], cond.surfaces=suit.rst.stack[[1:5]])
 plot(disp.rst.stack[[5]])
 
 
 
 
+load("occ_rst_stack.RData")
+load("suit_rst_stack.RData")
+load("disp_rst_stack.RData")
+load("dispersal_ability.RData")
 
+
+names(suit.rst.stack[[1]])
+
+interactions <- matrix(runif(min = -1, max = 1, n = 51^2),nrow = 51, ncol = 51)
+colnames(interactions) <- names(dispersal.ability)
+rownames(interactions) <- names(dispersal.ability)
+diag(interactions) <- 0
+
+
+occurrence.surfaces <- suit.rst.stack*disp.rst.stack
+int.matrix <- interactions
+# occurence.surfaces needs to be a raster stack including rasters of species occurances or abundances with values of 0 for absences and values > 0 for occurances. Values wil be scaled to range from 0 to 1
+# or the disp.pool, the env.pool or the product of both
+
+bio_pool <- function(occurrence.surfaces, int.matrix) {
+  
+  x=1 #Art
+  y=1 # cell
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
 
       
