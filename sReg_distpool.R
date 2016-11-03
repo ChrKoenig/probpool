@@ -82,7 +82,7 @@ disp_pool <- function(occurrence.surfaces, disp.ability=NULL, cond.surfaces=NULL
   }
   
   
-  dispersal <- stack(dispersal,layers=names(occurrence.surfaces))      
+  dispersal <- stack(dispersal)      
   
   return(dispersal)
 }
@@ -145,7 +145,7 @@ bio_pool <- function(occurrence.surfaces, int.matrix) {
     return(interaction.x.rst)
   })
 
-  interactions <- stack(interactions,layers=names(occurrence.surfaces))      
+  interactions <- stack(interactions)      
 
   return(interactions)
 }
@@ -163,7 +163,11 @@ plot(bio.rst.stack[[1]])
 plot(suit.rst.stack[[1]]*disp.rst.stack[[1]]*interactions[[1]])
 
 
+names(occ.rst.stack) <- names(dispersal.ability)
+names(bio.rst.stack)
+ 
+load("occ_rst_stack.RData")
 
-  
+
 
       
