@@ -1,0 +1,57 @@
+
+setMethod("plot", c("probpool"),
+          function(x, focalunit=FALSE,...)
+          {
+            if(length(focalunit)==2){
+              par(mfrow=c(4,3))
+              focal<-cbind(focalunit[1],focalunit[2])
+              loc<-extract(x@pools$disp.pool,focal, cellnumbers=TRUE)
+              
+              barplot(rev(sort(x@pools$disp.pool[loc[1]][1,])), ylim=c(0,1), ylab = "Probabilities", xlab= "Species", main = expression(paste(psi, "-dist")))
+              barplot(dpoibin(seq(1,length(x@pools$disp.pool[focalunit[1],focalunit[2]][1,]),1), x@pools$disp.pool[focalunit[1],focalunit[2]][1,]), ylab = "Probabilities", xlab= "Species", main = expression(paste(psi, "-dist")))
+              barplot(ppoibin(seq(1,length(x@pools$disp.pool[focalunit[1],focalunit[2]][1,]),1), x@pools$disp.pool[focalunit[1],focalunit[2]][1,]), ylim=c(0,1), ylab = "Probabilities", xlab= "Species", main = expression(paste(psi, "-dist")))
+              
+               
+              barplot(rev(sort(x@pools$env.pool[loc[1]][1,])), ylim=c(0,1), ylab = "Probabilities", xlab= "Species", main = expression(paste(psi, "-env")))
+              barplot(dpoibin(seq(1,length(x@pools$env.pool[loc[1]][1,]),1), x@pools$env.pool[focalunit[1],focalunit[2]][1,]), ylab = "Probabilities", xlab= "Species", main = expression(paste(psi, "-dist")))
+              barplot(ppoibin(seq(1,length(x@pools$env.pool[loc[1]][1,]),1), x@pools$env.pool[focalunit[1],focalunit[2]][1,]), ylim=c(0,1), ylab = "Probabilities", xlab= "Species", main = expression(paste(psi, "-dist")))
+              
+                 
+              barplot(rev(sort(x@pools$bio.pool[loc[1]][1,])), ylim=c(0,1), ylab = "Probabilities", xlab= "Species", main = expression(paste(psi, "-bio")))
+              barplot(dpoibin(seq(1,length(x@pools$bio.pool[loc[1]][1,]),1), x@pools$bio.pool[focalunit[1],focalunit[2]][1,]), ylab = "Probabilities", xlab= "Species", main = expression(paste(psi, "-dist")))
+              barplot(ppoibin(seq(1,length(x@pools$bio.pool[loc[1]][1,]),1), x@pools$bio.pool[focalunit[1],focalunit[2]][1,]), ylim=c(0,1), ylab = "Probabilities", xlab= "Species", main = expression(paste(psi, "-dist")))
+              
+             
+              barplot(rev(sort(x@pools$bio.pool[loc[1]][1,]*x@pools$disp.pool[focalunit[1],focalunit[2]][1,]*x@pools$env.pool[focalunit[1],focalunit[2]][1,])), ylim=c(0,1), ylab = "Probabilities", xlab= "Species", main = expression(paste(psi, "disp*env*bio")))
+              barplot(dpoibin(seq(1,length(x@pools$bio.pool[loc[1]][1,]),1), x@pools$bio.pool[loc[1]][1,]*x@pools$disp.pool[loc[1]][1,]*x@pools$env.pool[loc[1]][1,]), ylab = "Probabilities", xlab= "Species", main = expression(paste(psi, "-dist")))
+              barplot(ppoibin(seq(1,length(x@pools$bio.pool[loc[1]][1,]),1), x@pools$bio.pool[loc[1]][1,]*x@pools$disp.pool[loc[1]][1,]*x@pools$env.pool[loc[1]][1,]), ylim=c(0,1), ylab = "Probabilities", xlab= "Species", main = expression(paste(psi, "-dist")))
+              
+              fullpool.rst<-x@pools$disp.pool*x@pools$env.pool*x@pools$bio.pool
+              fullpool    <-raster::calc(fullpool.rst,fun=sum)
+              
+              }else{
+              par(mfrow=c(2,4))  
+              raster::plot(x@PSI$PSI.disp, main=expression(paste(psi, "-disp")))
+              raster::plot(x@PSI$PSI.env,  main=expression(paste(psi, "-env")))
+              raster::plot(x@PSI$PSI.bio,  main=expression(paste(psi, "-bio")))
+              raster::plot(fullpool,  main=expression(paste(psi, "-disp+env+bio")))
+              
+              
+            }
+          }
+)
+
+
+
+#setMethod('summary', c("probpool"),
+#          function(x, ...) 
+#            {
+#            print("Probabilistic species pools")
+#            print("Estimated number of species belonging to the species pool:")
+#            print(paste(expression(psi,"-disp : ",x@psi$disp.pool)))
+#            print(paste(expression(psi,"-disp : ",x@psi$env.pool)))
+##            print(paste(expression(psi,"-disp : ",x@psi$bio.pool)))
+#          }          
+#)
+
+
