@@ -39,6 +39,7 @@ plot(suit.rst.stack[[5]])
 
 
 load("data/Simu_occurrences.RData")
+load("data/Simu_env_prob.RData")
 
 disp.simu.stack <- disp_pool(occurrence.surfaces = simu_occ_rst_stack, disp.ability = 1, longlat = FALSE)
 plot(disp.simu.stack[[5]])
@@ -61,6 +62,18 @@ head(values(Simu_bio.rst.stack))
 range(values(Simu_bio.rst.stack[[5]]))
 
 plot(Simu_bio.rst.stack[[5]])
+
+par(mfrow=c(2,3))
+
+plot(simu_occ_rst_stack[[5]])
+plot(Simu_env_prob[[5]])
+plot(disp.simu.stack [[5]])
+plot(Simu_bio.rst.stack[[5]])
+plot(Simu_env_prob[[5]]*disp.simu.stack[[5]])
+
+
+plot(Simu_env_prob[[5]]*disp.simu.stack[[5]]*Simu_bio.rst.stack[[5]])
+
 
 
 river <- raster(nrows=15, ncols=15, vals = t(matrix(c(rep(1,6*15),rep(0.5,15),rep(0,15),rep(0.5,15),rep(1,6*15)),nrow=15,ncol=15)),xmn=-1, xmx=16, ymn=-1, ymx=16)
