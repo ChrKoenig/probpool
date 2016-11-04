@@ -90,19 +90,19 @@ setMethod("plot", c("probpool"),
               }
             }else{
               par(mfrow=c(1,x@pool.count))    
-              if(is.null(x@PSI$disp.pool)==FALSE)  
+              if(is.null(x@PSI$env.pool)==FALSE)
               {
                 plotRasterPool(x,"disp.pool")
               }
-              if(is.null(x@PSI$env.pool)==FALSE)  
+              if(is.null(x@PSI$env.pool)==FALSE)
               {
                 plotRasterPool(x,"env.pool")
               }
-              if(is.null(x@PSI$bio.pool)==FALSE)  
+              if(is.null(x@PSI$env.pool)==FALSE)
               {
                 plotRasterPool(x,"bio.pool")
               }
-              if(is.null(x@PSI$comb.pool)==FALSE)  
+              if(is.null(x@PSI$env.pool)==FALSE)
               {
                 plotRasterPool(x,"comb.pool")
               }
