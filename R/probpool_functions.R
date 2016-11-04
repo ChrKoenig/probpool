@@ -194,6 +194,43 @@ names(bio.rst.stack)
  
 load("occ_rst_stack.RData")
 
+# allD is a wrapper function for calcD that applies the calculation
+# of calcD to all cells and all species. It takes the full occupancy
+# matrix, the full pairwise distance matrix and a vector of each
+# species' dispersal ability. As with calcD, you specify the dispersal
+# function by specifying "method"
+allD = function(occupancy,distance,k,method = "negexp")
+{
+  Pd = sapply(1:ncol(occupancy),function(i){sapply(1:nrow(occupancy), function(j){calcD(occupancy[,i],distance[j,],k[i],method)})})
+  return(Pd)
+}
+
+# allE is a function that calculates the environmental suitability
+# for all species across all sites. There are two methods available:
+# 1. consider the distance between a focal site and the closest (in 
+# environmental space) occupied site, and rank it against all distances
+# 2. use beals smoothing
+calcE = function(occupancy,envdist,site)
+{
+  index = which(occupancy > 0)
+  es = 1-length(which(envdist[,site] < min(envdist[index,site])))/256
+  return(es)
+}
+
+allE = function(occupancy,environment=NULL, method)
+{
+  if(method == "mindist")
+  {
+    dists = as.matrix(dist(environment))
+    Pe = sapply(1:ncol(occupancy),function(i){sapply(1:nrow(occupancy), function(j){calcE(d[,i],dists,j)})})
+  }
+  if(method == "beals")
+  {
+    require(vegan)
+    Pe = beals(occupancy)	
+  }
+  return(Pe)
+}
 
 
       
