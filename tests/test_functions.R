@@ -62,13 +62,6 @@ range(values(Simu_bio.rst.stack[[5]]))
 
 plot(Simu_bio.rst.stack[[5]])
 
-plot(Simu_bio.rst.stack[[5]]/max(values(Simu_bio.rst.stack[[5]])))
-
-
-interactions.x <- t(sapply(1:nrow(occurrence.surfaces), function(y) occurrence.surfaces[y,]*int.matrix[,x]))
-interactions.x <- rowMeans(interactions.x)
-
-
 
 river <- raster(nrows=15, ncols=15, vals = t(matrix(c(rep(1,6*15),rep(0.5,15),rep(0,15),rep(0.5,15),rep(1,6*15)),nrow=15,ncol=15)),xmn=-1, xmx=16, ymn=-1, ymx=16)
 river <- suit.rst.stack[[1]]
