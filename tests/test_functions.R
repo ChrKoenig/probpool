@@ -47,6 +47,29 @@ values(disp.simu.stack[[5]])
 
 plot(simu_occ_rst_stack[[2]])
 
+###Checking bio pool for hte simulated data
+load("data/Simu_InteractionMatrix.RData")
+
+int.matrix <- Simu_InteractionMatrix
+mean(Simu_InteractionMatrix)
+
+occurrence.surfaces <- simu_occ_rst_stack
+Simu_bio.rst.stack <- bio_pool(occurrence.surfaces, int.matrix, abundance=FALSE)
+
+occurrence.surfaces2<-occurrence.surfaces[occurrence.surfaces,]
+
+head(values(occurrence.surfaces))
+head(values(Simu_bio.rst.stack))
+range(values(Simu_bio.rst.stack[[5]]))
+
+plot(Simu_bio.rst.stack[[5]])
+
+plot(Simu_bio.rst.stack[[5]]/max(values(Simu_bio.rst.stack[[5]])))
+
+
+interactions.x <- t(sapply(1:nrow(occurrence.surfaces), function(y) occurrence.surfaces[y,]*int.matrix[,x]))
+interactions.x <- rowMeans(interactions.x)
+
 
 
 river <- raster(nrows=15, ncols=15, vals = t(matrix(c(rep(1,6*15),rep(0.5,15),rep(0,15),rep(0.5,15),rep(1,6*15)),nrow=15,ncol=15)),xmn=-1, xmx=16, ymn=-1, ymx=16)
@@ -105,21 +128,21 @@ plot(disp.simu.stack[[5]])
 
 
 
-load("occ_rst_stack.RData")
-load("suit_rst_stack.RData")
-load("disp_rst_stack.RData")
 
+
+
+### Bio pool
 
 load("data/Ranunculaceae_dispersal_ability.RData")
 load("data/Ranunculaceae_occurrences.RData")
 load("data/Ranunculaceae_env_prob.RData")
 load("data/Ranunculaceae_disp_prob.RData")
 
-
-
-     
+    
 names(suit.rst.stack[[1]])
 
+
+# create interaction matrix(
 interactions <- matrix(runif(min = -1, max = 1, n = 51^2),nrow = 51, ncol = 51)
 colnames(interactions) <- names(dispersal.ability)
 rownames(interactions) <- names(dispersal.ability)
@@ -145,4 +168,3 @@ plot(suit.rst.stack[[1]]*disp.rst.stack[[1]]*interactions[[1]])
 names(occ.rst.stack) <- names(dispersal.ability)
 names(bio.rst.stack)
 
-load("occ_rst_stack.RData")
