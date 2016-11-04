@@ -56,8 +56,6 @@ mean(Simu_InteractionMatrix)
 occurrence.surfaces <- simu_occ_rst_stack
 Simu_bio.rst.stack <- bio_pool(occurrence.surfaces, int.matrix, abundance=FALSE)
 
-occurrence.surfaces2<-occurrence.surfaces[occurrence.surfaces,]
-
 head(values(occurrence.surfaces))
 head(values(Simu_bio.rst.stack))
 range(values(Simu_bio.rst.stack[[5]]))
