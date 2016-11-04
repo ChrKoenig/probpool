@@ -69,9 +69,7 @@ plot(simu_occ_rst_stack[[5]])
 plot(Simu_env_prob[[5]])
 plot(disp.simu.stack [[5]])
 plot(Simu_bio.rst.stack[[5]])
-plot(Simu_env_prob[[5]]*disp.simu.stack[[5]])
-
-
+#plot(Simu_env_prob[[5]]*disp.simu.stack[[5]])
 plot(Simu_env_prob[[5]]*disp.simu.stack[[5]]*Simu_bio.rst.stack[[5]])
 
 
