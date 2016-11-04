@@ -1,4 +1,6 @@
 
+# set standard method for plotting a class probpool
+
 setMethod("plot", c("probpool"),
           function(x, focalunit=FALSE,...)
           {
@@ -27,8 +29,12 @@ setMethod("plot", c("probpool"),
                 plotPoolCDF(x,"bio.pool",focalunit)
               }
               
-              #fullpool.rst<-x@pools$disp.pool*x@pools$env.pool*x@pools$bio.pool
-              #fullpool    <-raster::calc(fullpool.rst,fun=sum)
+              if(is.null(x@pools$comb.pool)==FALSE)
+              {
+                plotPoolProbs(x,"comb.pool",focalunit)
+                plotPoolPDF(x,"comb.pool",focalunit)
+                plotPoolCDF(x,"comb.pool",focalunit)
+              }
               
               }else{
                 
@@ -48,8 +54,10 @@ setMethod("plot", c("probpool"),
                 {
                   plotRasterPool(x,"disp.pool")
                 }
-
-              #raster::plot(fullpool,  main=expression(paste(psi, "-disp+env+bio")))
+                if(is.null(x@PSI$comb.pool)==FALSE)  
+                {
+                  plotRasterPool(x,"comb.pool")
+                }
             }
           }
 )

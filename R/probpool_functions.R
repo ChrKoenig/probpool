@@ -164,4 +164,36 @@ allE = function(occupancy,environment=NULL, method)
 }
 
 
+# Function to plot pool for a single focal unit defined by focalunit
+plotPoolProbs<-function(probpool,pool,focalunit)
+{
+  focal<-cbind(focalunit[1],focalunit[2])
+  loc<-extract(probpool@pools[[pool]],focal, cellnumbers=TRUE)
+  barplot(rev(sort(probpool@pools[[pool]][loc[1]][1,])), ylim=c(0,1), ylab = "Probabilities", xlab= "Species", main = pool)
+}
+
+# Function to plot pool probability density function
+plotPoolPDF<-function(probpool,pool,focalunit)
+{
+  focal<-cbind(focalunit[1],focalunit[2])
+  loc<-extract(probpool@pools[[pool]],focal, cellnumbers=TRUE)
+  barplot(dpoibin(seq(1,length(probpool@pools[[pool]][loc[1]][1,]),1), probpool@pools[[pool]][loc[1]][1,]), names.arg=1:length(probpool@pools[[pool]][loc[1]][1,]), ylab = "Probabilities", xlab= "Species", main = pool)
+}
+
+# Function to plot pool cumulative density function
+plotPoolCDF<-function(probpool,pool,focalunit)
+{
+  focal<-cbind(focalunit[1],focalunit[2])
+  loc<-extract(probpool@pools[[pool]],focal, cellnumbers=TRUE)
+  barplot(ppoibin(seq(1,length(probpool@pools[[pool]][loc[1]][1,]),1), probpool@pools[[pool]][loc[1]][1,]), ylim=c(0,1), names.arg=1:length(probpool@pools[[pool]][loc[1]][1,]), ylab = "Probabilities", xlab= "Species", main = pool)
+}
+
+# Function to plot pool as a raster
+plotRasterPool<-function(probpool,pool)
+{
+  raster::plot(probpool@PSI[[pool]], main=pool)
+}
+
+
+
       

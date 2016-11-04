@@ -10,9 +10,10 @@ probpool = function(env.pool = NULL, disp.pool = NULL, bio.pool = NULL){
   species = lapply(pools, names)
   new("probpool", 
       pools = pools,
-      species = names(pools[[which(!sapply(pools, is.null))]]),
+      pool.count = length(which(!sapply(pools, is.null))),
+      species = names(pools[[min(which(!sapply(pools, is.null)))]]),
       PSI = list(env.pool = sum(env.pool), disp.pool = sum(disp.pool), bio.pool = sum(bio.pool)),
-      slots = c("pools", "species", "PSI")
+      slots = c("pools", "pool.count", "species", "PSI")
   )
 }
 
@@ -28,7 +29,6 @@ is.valid.probpool = function(object){
     }
   }
   pool.dims = matrix(sapply(object@pools, dim)) # Check dimensions
-  message(pool.dims)
   if(any(apply(pool.dims, 1, function(x) length(unique(x)) != 1))){
     errors = c(errors, "All pools need to have the same dimensions")
   }
@@ -40,6 +40,7 @@ is.valid.probpool = function(object){
 # Class
 setClass("probpool",
          slots = c(pools = "list",
+                   pool.count = "numeric",
                    species = "character",
                    PSI = "list",
                    slots = "character"),
@@ -47,10 +48,10 @@ setClass("probpool",
 
 ###################################################################
 ######################### METHOD DEFINITIONS ########################
-setMethod("summary", "probpool",  function(x){
+setMethod("summary", "probpool",  function(object, ...){
   cat("Probabilistic species pool \n\n")
-  cat(paste("Pools present: ", names(which(!sapply(x@pools, is.null))), "\n", sep = ""))
-  cat(paste("Species present: ", length(x@species), "\n", sep = ""))
+  cat(paste("Pools:\t", paste(names(which(!sapply(object@pools, is.null))), collapse = ", "), sep = ""), "\n")
+  cat(paste("Species present:\t", length(object@species), "\n", sep = ""))
 })
 
 setMethod("print", "probpool", function(x){
