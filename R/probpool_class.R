@@ -63,7 +63,7 @@ setMethod("plot", c("probpool"),
           {
             if(length(focalunit)==2)
             {
-              par(mfrow=c(4,x@pool.count))
+              par(mfrow=c(x@pool.count,3))
               if(is.null(x@pools$disp.pool)==FALSE)
               {
                 plotPoolProbs(x,"disp.pool",focalunit)
@@ -89,7 +89,7 @@ setMethod("plot", c("probpool"),
                 plotPoolCDF(x,"comb.pool",focalunit)
               }
             }else{
-              par(mfrow=c(2,x@pool.count))    
+              par(mfrow=c(1,x@pool.count))    
               if(is.null(x@PSI$disp.pool)==FALSE)  
               {
                 plotRasterPool(x,"disp.pool")
