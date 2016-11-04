@@ -8,7 +8,7 @@ probpool = function(env.pool = NULL, disp.pool = NULL, bio.pool = NULL){
   new("probpool", 
       pools = pools,
       species = names(env.pool),
-      PSI = list(PSI.env = sum(env.pool), PSI.disp = sum(disp.pool), PSI.bio = sum(bio.pool)),
+      PSI = list(env.pool = sum(env.pool), disp.pool = sum(disp.pool), bio.pool = sum(bio.pool)),
       slots = c("pools", "species", "PSI")
   )
 }
