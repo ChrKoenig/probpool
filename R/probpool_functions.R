@@ -101,17 +101,23 @@ disp_pool <- function(occurrence.surfaces, disp.ability, method=c("negexp","fatt
 
 # int.matrix is a species by species matrix (may be asymmetric) with interactions assumed to be directed from the species in the row to the species in the colums
 
-bio_pool <- function(occurrence.surfaces, int.matrix) {
+bio_pool <- function(occurrence.surfaces, int.matrix, abundance=TRUE) {
 
   occurrences <- values(occurrence.surfaces)
   occurrences <- occurrences[complete.cases(occurrences),]
+
+  if (abundance) { 
+    occurrences <- occurrences(max(occurrences))
+  }else{
+    occurrences[occurrences>0] <- 1 
+  }
   
   # multiply the incoming interactions of each species x (columns in int.matrix)
   # with the occurrence/probability of all other species for the given site y
   interactions <- lapply(1:dim(occurrence.surfaces)[3], function(x) {
     
     interactions.x <- t(sapply(1:nrow(occurrences), function(y) occurrences[y,]*int.matrix[,x]))
-    interactions.x <- (rowMeans(interactions.x)+1)/2
+    interactions.x <- rowMeans(interactions.x)
   
     interactions.x.rst <- occurrence.surfaces[[x]]
     interactions.x.rst[!is.na(interactions.x.rst)] <- interactions.x
