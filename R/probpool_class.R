@@ -67,18 +67,18 @@ setMethod("plot", c("probpool"),
           {
             if(length(focalunit)==2)
             {
-              par(mfrow=c(4,x@pool.count))
-              if(is.null(x@pools$env.pool)==FALSE)
-              {
-                plotPoolProbs(x,"env.pool",focalunit)
-                plotPoolPDF(x,"env.pool",focalunit)
-                plotPoolCDF(x,"env.pool",focalunit)
-              }
+              par(mfrow=c(x@pool.count,3))
               if(is.null(x@pools$disp.pool)==FALSE)
               {
                 plotPoolProbs(x,"disp.pool",focalunit)
                 plotPoolPDF(x,"disp.pool",focalunit)
                 plotPoolCDF(x,"disp.pool",focalunit)
+              }
+              if(is.null(x@pools$env.pool)==FALSE)
+              {
+                plotPoolProbs(x,"env.pool",focalunit)
+                plotPoolPDF(x,"env.pool",focalunit)
+                plotPoolCDF(x,"env.pool",focalunit)
               }
               if(is.null(x@pools$bio.pool)==FALSE)
               {
@@ -93,10 +93,10 @@ setMethod("plot", c("probpool"),
                 plotPoolCDF(x,"comb.pool",focalunit)
               }
             }else{
-              par(mfrow=c(2,x@pool.count))    
-              if(is.null(x@PSI$bio.pool)==FALSE)  
+              par(mfrow=c(1,x@pool.count))    
+              if(is.null(x@PSI$disp.pool)==FALSE)  
               {
-                plotRasterPool(x,"bio.pool")
+                plotRasterPool(x,"disp.pool")
               }
               if(is.null(x@PSI$env.pool)==FALSE)  
               {
@@ -104,7 +104,7 @@ setMethod("plot", c("probpool"),
               }
               if(is.null(x@PSI$bio.pool)==FALSE)  
               {
-                plotRasterPool(x,"disp.pool")
+                plotRasterPool(x,"bio.pool")
               }
               if(is.null(x@PSI$comb.pool)==FALSE)  
               {

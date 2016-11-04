@@ -8,10 +8,10 @@ load("data/Ranunculaceae_env_prob.RData")
 
 par(mfrow=c(1,1))
 
-disp.rst.stack <- disp_pool(occurrence.surfaces = occ.rst.stack[[1:5]], disp.ability = 50)
+disp.rst.stack <- disp_pool(occurrence.surfaces = occ.rst.stack, disp.ability = 50)
 plot(disp.rst.stack[[5]])
 
-# save(disp.rst.stack,file="Ranunculaceae_disp_prob")
+save(disp.rst.stack,file="data/Ranunculaceae_disp_prob.RData")
 
 disp.rst.stack <- disp_pool(occurrence.surfaces = occ.rst.stack[[4:5]], disp.ability = 2500, cond.surfaces=suit.rst.stack[[4:5]])
 plot(disp.rst.stack[[2]])
@@ -49,7 +49,9 @@ plot(simu_occ_rst_stack[[2]])
 
 
 
-river <- raster(nrows=15, ncols=15, vals = t(matrix(c(rep(1,6*15),rep(0.5,15),rep(0,15),rep(0.5,15),rep(1,6*15)),nrow=15,ncol=15)),xmn=0, xmx=15, ymn=0, ymx=15)
+river <- raster(nrows=15, ncols=15, vals = t(matrix(c(rep(1,6*15),rep(0.5,15),rep(0,15),rep(0.5,15),rep(1,6*15)),nrow=15,ncol=15)),xmn=-1, xmx=16, ymn=-1, ymx=16)
+river <- suit.rst.stack[[1]]
+extent(river)
 
 # replace NAs by 0
 river[is.na(river)] <- 1/100
@@ -74,11 +76,28 @@ distances <- as.matrix(distances)
 commuteDistance(spec.trans, matrix(c(14.5,0.5,6,7),2,2))
 commuteDistance(spec.trans, matrix(c(13.9,6,0,7),2,2))
 
+commuteDistance(spec.trans, matrix(c(47.21,47.3,5.8333331,5.9),2,2))
+commuteDistance(spec.trans, matrix(c(5.84, 6, 47.21, 48),2,2))
+
+extent(river)
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 plot(simu_occ_rst_stack[[1]])
 
 
-disp.simu.stack <- disp_pool(occurrence.surfaces = simu_occ_rst_stack, cond.surfaces=river, disp.ability = 10, longlat = FALSE)
+disp.simu.stack <- disp_pool(occurrence.surfaces = simu_occ_rst_stack, cond.surfaces=river, disp.ability = 100, longlat = FALSE)
 plot(simu_occ_rst_stack[[5]])
 plot(river)
 plot(disp.simu.stack[[5]])
@@ -89,9 +108,16 @@ plot(disp.simu.stack[[5]])
 load("occ_rst_stack.RData")
 load("suit_rst_stack.RData")
 load("disp_rst_stack.RData")
-load("dispersal_ability.RData")
 
 
+load("data/Ranunculaceae_dispersal_ability.RData")
+load("data/Ranunculaceae_occurrences.RData")
+load("data/Ranunculaceae_env_prob.RData")
+load("data/Ranunculaceae_disp_prob.RData")
+
+
+
+     
 names(suit.rst.stack[[1]])
 
 interactions <- matrix(runif(min = -1, max = 1, n = 51^2),nrow = 51, ncol = 51)
@@ -102,13 +128,10 @@ int.matrix <- interactions
 
 occurrence.surfaces <- suit.rst.stack*disp.rst.stack
 
-
-
-
-
 bio.rst.stack <- bio_pool(occurrence.surfaces, int.matrix)
 
-save(bio.rst.stack, file="bio_rst_stack.RData")
+save(bio.rst.stack, file="data/Ranunculaceae_bio_prob.RData")
+
 
 
 plot(occ.rst.stack[[1]])
