@@ -42,6 +42,20 @@ setMethod("plot", c("probpool"),
 )
 
 
+plotSinglePool<-function(probpool,pool,focalunit)
+{
+  focal<-cbind(focalunit[1],focalunit[2])
+  loc<-extract(probpool@pools[[pool]],focal, cellnumbers=TRUE)
+  barplot(rev(sort(probpool@pools[[pool]][loc[1]][1,])), ylim=c(0,1), ylab = "Probabilities", xlab= "Species", main = expression(paste(psi, "-", pool)))
+}
+
+plotRasterPool<-function(probpool,pool)
+{
+  raster::plot(probpool@PSI[[pool]], main=expression(paste(psi, pool)))
+}
+
+
+
 
 #setMethod('summary', c("probpool"),
 #          function(x, ...) 
