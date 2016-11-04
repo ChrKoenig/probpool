@@ -47,6 +47,24 @@ values(disp.simu.stack[[5]])
 
 plot(simu_occ_rst_stack[[2]])
 
+###Checking bio pool for hte simulated data
+load("data/Simu_InteractionMatrix.RData")
+cooccur.probs2<-as.matrix(cooccur.probs)
+summary(cooccur.probs2)
+range(cooccur.probs2)
+dim( cooccur.probs2)
+
+int.matrix <- cooccur.probs2
+
+occurrence.surfaces <- simu_occ_rst_stack
+Simu_bio.rst.stack <- bio_pool(occurrence.surfaces, int.matrix, abundances=)
+
+occurrence.surfaces2<-occurrence.surfaces[occurrence.surfaces,]
+
+head(values(occurrence.surfaces))
+head(values(Simu_bio.rst.stack))
+
+plot(Simu_bio.rst.stack[[5]])
 
 
 river <- raster(nrows=15, ncols=15, vals = t(matrix(c(rep(1,6*15),rep(0.5,15),rep(0,15),rep(0.5,15),rep(1,6*15)),nrow=15,ncol=15)),xmn=0, xmx=15, ymn=0, ymx=15)
