@@ -6,6 +6,6 @@ Authors@R: c(person("Joe", "Developer", role = c("aut", "cre"),
 		     email = "Joe.Developer@some.domain.net"))
 Author: Joe Developer [aut, cre]
 Maintainer: 
-Depends: R (>= 3.1), raster, gdistance
+Depends: R (>= 3.1), raster, gdistance, poibin
 Description: Package to calculate probabilistic species pools following Karger et al. (2016): Delineating probabilistic species pools in ecology and biogeography
 BugReports: https://pkgname.bugtracker.url

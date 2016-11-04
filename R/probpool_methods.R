@@ -41,31 +41,26 @@ setMethod("plot", c("probpool"),
           }
 )
 
-
-plotSinglePool<-function(probpool,pool,focalunit)
+# Function to plot pool for a single focal unit defined by focalunit
+plotPoolProbs<-function(probpool,pool,focalunit)
 {
   focal<-cbind(focalunit[1],focalunit[2])
   loc<-extract(probpool@pools[[pool]],focal, cellnumbers=TRUE)
-  barplot(rev(sort(probpool@pools[[pool]][loc[1]][1,])), ylim=c(0,1), ylab = "Probabilities", xlab= "Species", main = expression(paste(psi, "-", pool)))
+  barplot(rev(sort(probpool@pools[[pool]][loc[1]][1,])), ylim=c(0,1), ylab = "Probabilities", xlab= "Species", main = pool)
 }
 
+plotPoolPDF<-function(probpool,pool,focalunit)
+{
+  focal<-cbind(focalunit[1],focalunit[2])
+  loc<-extract(probpool@pools[[pool]],focal, cellnumbers=TRUE)
+  barplot(dpoibin(seq(1,length(probpool@pools[[pool]][focalunit[1],focalunit[2]][1,]),1), probpool@pools[[pool]][focalunit[1],focalunit[2]][1,]), ylab = "Probabilities", xlab= "Species", main = expression(paste(psi, "-dist")))
+}
+
+
+# Function to plot pool as a raster
 plotRasterPool<-function(probpool,pool)
 {
-  raster::plot(probpool@PSI[[pool]], main=expression(paste(psi, pool)))
+  raster::plot(probpool@PSI[[pool]], main=pool)
 }
-
-
-
-
-#setMethod('summary', c("probpool"),
-#          function(x, ...) 
-#            {
-#            print("Probabilistic species pools")
-#            print("Estimated number of species belonging to the species pool:")
-#            print(paste(expression(psi,"-disp : ",x@psi$disp.pool)))
-#            print(paste(expression(psi,"-disp : ",x@psi$env.pool)))
-##            print(paste(expression(psi,"-disp : ",x@psi$bio.pool)))
-#          }          
-#)
 
 
