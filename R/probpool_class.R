@@ -7,10 +7,14 @@ library(raster)
 # Constructor function
 probpool = function(env.pool = NULL, disp.pool = NULL, bio.pool = NULL){
   pools = list(env.pool = env.pool, disp.pool = disp.pool, bio.pool = bio.pool)
-  species = lapply(pools, names)
+  
+  # Calculate comb.pool
+  comb.pool = disp.pool * env.pool # multiplied probabilitie  # modify probabilities
+  
+  pool.count = length(which(!sapply(pools, is.null)))
   new("probpool", 
       pools = pools,
-      pool.count = length(which(!sapply(pools, is.null))),
+      pool.count = pool.count,
       species = names(pools[[min(which(!sapply(pools, is.null)))]]),
       PSI = list(env.pool = sum(env.pool), disp.pool = sum(disp.pool), bio.pool = sum(bio.pool)),
       slots = c("pools", "pool.count", "species", "PSI")
