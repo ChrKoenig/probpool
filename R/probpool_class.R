@@ -47,12 +47,12 @@ setClass("probpool",
 
 ###################################################################
 ######################### METHOD DEFINITIONS ########################
-summary.probpool = function(object,...){
+setMethod("summary", "probpool",  function(x){
   cat("Probabilistic species pool \n\n")
-  cat(paste("Pools present: ", names(which(!sapply(object@pools, is.null))), "\n", sep = ""))
-  cat(paste("Species present: ", length(object@species), "\n", sep = ""))
-}
+  cat(paste("Pools present: ", names(which(!sapply(x@pools, is.null))), "\n", sep = ""))
+  cat(paste("Species present: ", length(x@species), "\n", sep = ""))
+})
 
-print.probpool = function(object,...){
-  summary(object)
-}
+setMethod("print", "probpool", function(x){
+  summary(x)
+})
