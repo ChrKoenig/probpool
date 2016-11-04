@@ -82,7 +82,7 @@ disp_pool <- function(occurrence.surfaces, disp.ability=NULL, cond.surfaces=NULL
   }
   
   
-  dispersal <- stack(dispersal,layers=names(occurrence.surfaces))      
+  dispersal <- stack(dispersal)      
   
   return(dispersal)
 }
@@ -104,6 +104,7 @@ disp.rst.stack <- disp_pool(occurrence.surfaces = occ.rst.stack[[1:5]], disp.abi
 plot(disp.rst.stack[[5]])
 
 
+plot(suit.rst.stack[[5]])
 
 
 load("occ_rst_stack.RData")
@@ -139,21 +140,21 @@ bio_pool <- function(occurrence.surfaces, int.matrix) {
     interactions.x <- t(sapply(1:nrow(occurrences), function(y) occurrences[y,]*int.matrix[,x]))
     interactions.x <- (rowMeans(interactions.x)+1)/2
   
-    interaction.x.rst <- occurrence.surfaces[[x]]
-    interaction.x.rst[!is.na(interactions.x.rst)] <- interactions.x
+    interactions.x.rst <- occurrence.surfaces[[x]]
+    interactions.x.rst[!is.na(interactions.x.rst)] <- interactions.x
   
-    return(interaction.x.rst)
+    return(interactions.x.rst)
   })
 
-  interactions <- stack(interactions,layers=names(occurrence.surfaces))      
+  interactions <- stack(interactions)      
 
   return(interactions)
 }
 
 bio.rst.stack <- bio_pool(occurrence.surfaces, int.matrix)
 
-save(bio.rst.stack, file="bio.rst.stack.RData")
-  
+save(bio.rst.stack, file="bio_rst_stack.RData")
+
   
 plot(occ.rst.stack[[1]])
 plot(suit.rst.stack[[1]])
@@ -163,7 +164,11 @@ plot(bio.rst.stack[[1]])
 plot(suit.rst.stack[[1]]*disp.rst.stack[[1]]*interactions[[1]])
 
 
+names(occ.rst.stack) <- names(dispersal.ability)
+names(bio.rst.stack)
+ 
+load("occ_rst_stack.RData")
 
-  
+
 
       
