@@ -1,6 +1,7 @@
 load("dispersal_ability.RData")
 load("occ_rst_stack.RData")
 load("suit_rst_stack.RData")
+load("Simu_specslist.stack.RData")
 
 library(sp);library(raster); library(gdistance)
 
@@ -40,17 +41,17 @@ calcD = function(occupancy, distance, k, method = "negexp")
 
 
 
-disp_pool <- function(occurrence.surfaces, disp.ability=NULL, cond.surfaces=NULL) {
+disp_pool <- function(occurrence.surfaces, disp.ability, method=c("negexp","fattail"),cond.surfaces=NULL, longlat=TRUE) {
   
   occurrences <- rasterToPoints(occurrence.surfaces)
   
   if (is.null(cond.surfaces)){
     
-    distances <- spDists(occurrences[,c(1:2)], occurrences[,c(1:2)], longlat = TRUE)
+    distances <- spDists(occurrences[,c(1:2)], occurrences[,c(1:2)], longlat = longlat)
     
     dispersal <- lapply(1:dim(occurrence.surfaces)[3], function(x) {
       
-      dispersal.x <- sapply(1:nrow(occurrences), function(y) calcD(occurrences[,x+2],distances[,y]/50, ifelse(is.null(disp.ability),1,disp.ability[x]), method = "negexp"))  # check 50
+      dispersal.x <- sapply(1:nrow(occurrences), function(y) calcD(occurrences[,x+2],distances[,y], ifelse(length(disp.ability)==1,disp.ability,disp.ability[x]), method = method[1]))
       dispersal.x.rst <- occurrence.surfaces[[x]]
       dispersal.x.rst[!is.na(dispersal.x.rst)] <- dispersal.x
       return(dispersal.x.rst)
@@ -71,10 +72,10 @@ disp_pool <- function(occurrence.surfaces, disp.ability=NULL, cond.surfaces=NULL
       spec.trans <- geoCorrection(spec.trans, type="c")
       
       # calculate commute distances
-      distances <- commuteDistance(spec.trans, occurrences[,c(1:2)])
+      distances <- commuteDistance(spec.trans, occurrences[,c(1:2)])/2
       distances <- as.matrix(distances)
       
-      dispersal.x <- sapply(1:nrow(occurrences), function(y) calcD(occurrences[,x+2],distances[,y]/5000, ifelse(is.null(disp.ability),1,disp.ability[x]), method = "negexp"))  # check 5000
+      dispersal.x <- sapply(1:nrow(occurrences), function(y) calcD(occurrences[,x+2],distances[,y], ifelse(length(disp.ability)==1,disp.ability,disp.ability[x]), method = method[1]))  # check 5000
       dispersal.x.rst <- occurrence.surfaces[[x]]
       dispersal.x.rst[!is.na(dispersal.x.rst)] <- dispersal.x
       return(dispersal.x.rst)
@@ -88,14 +89,16 @@ disp_pool <- function(occurrence.surfaces, disp.ability=NULL, cond.surfaces=NULL
 }
 
 
-par(mfrow=c(2,2))
 
-disp.rst.stack <- disp_pool(occurrence.surfaces = occ.rst.stack)
+
+par(mfrow=c(1,1))
+
+disp.rst.stack <- disp_pool(occurrence.surfaces = occ.rst.stack[[1:5]], disp.ability = 50)
 plot(disp.rst.stack[[5]])
 save(disp.rst.stack,file="disp_rst_stack.RData")
 
-disp.rst.stack <- disp_pool(occurrence.surfaces = occ.rst.stack[[1:5]], cond.surfaces=suit.rst.stack[[1:5]])
-plot(disp.rst.stack[[5]])
+disp.rst.stack <- disp_pool(occurrence.surfaces = occ.rst.stack[[4:5]], disp.ability = 2500, cond.surfaces=suit.rst.stack[[4:5]])
+plot(disp.rst.stack[[2]])
 
 disp.rst.stack <- disp_pool(occurrence.surfaces = occ.rst.stack[[1:5]], disp.ability=dispersal.ability[1:5])
 plot(disp.rst.stack[[5]])
@@ -105,6 +108,28 @@ plot(disp.rst.stack[[5]])
 
 
 plot(suit.rst.stack[[5]])
+
+
+
+disp.simu.stack <- disp_pool(occurrence.surfaces = Simu_specslist.stack, longlat = FALSE)
+plot(disp.simu.stack[[5]])
+
+values(disp.simu.stack[[5]])
+
+plot(Simu_specslist.stack[[2]])
+
+par
+
+
+
+
+
+matrix(c(rep(1,6*15),rep(0.5,15),rep(0,15),rep(0.5,15),rep(1,6*15)),nrow=15,ncol=15)
+
+
+
+
+
 
 
 load("occ_rst_stack.RData")
