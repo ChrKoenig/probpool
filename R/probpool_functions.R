@@ -107,7 +107,7 @@ bio_pool <- function(occurrence.surfaces, int.matrix, abundance=TRUE) {
   occurrences <- occurrences[complete.cases(occurrences),]
 
   if (abundance) { 
-    occurrences <- occurrences(max(occurrences))
+    occurrences <- occurrences/max(occurrences)
   }else{
     occurrences[occurrences>0] <- 1 
   }
