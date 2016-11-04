@@ -8,10 +8,10 @@ load("data/Ranunculaceae_env_prob.RData")
 
 par(mfrow=c(1,1))
 
-disp.rst.stack <- disp_pool(occurrence.surfaces = occ.rst.stack[[1:5]], disp.ability = 50)
+disp.rst.stack <- disp_pool(occurrence.surfaces = occ.rst.stack, disp.ability = 50)
 plot(disp.rst.stack[[5]])
 
-# save(disp.rst.stack,file="Ranunculaceae_disp_prob")
+save(disp.rst.stack,file="data/Ranunculaceae_disp_prob.RData")
 
 disp.rst.stack <- disp_pool(occurrence.surfaces = occ.rst.stack[[4:5]], disp.ability = 2500, cond.surfaces=suit.rst.stack[[4:5]])
 plot(disp.rst.stack[[2]])
@@ -108,9 +108,16 @@ plot(disp.simu.stack[[5]])
 load("occ_rst_stack.RData")
 load("suit_rst_stack.RData")
 load("disp_rst_stack.RData")
-load("dispersal_ability.RData")
 
 
+load("data/Ranunculaceae_dispersal_ability.RData")
+load("data/Ranunculaceae_occurrences.RData")
+load("data/Ranunculaceae_env_prob.RData")
+load("data/Ranunculaceae_disp_prob.RData")
+
+
+
+     
 names(suit.rst.stack[[1]])
 
 interactions <- matrix(runif(min = -1, max = 1, n = 51^2),nrow = 51, ncol = 51)
@@ -121,13 +128,10 @@ int.matrix <- interactions
 
 occurrence.surfaces <- suit.rst.stack*disp.rst.stack
 
-
-
-
-
 bio.rst.stack <- bio_pool(occurrence.surfaces, int.matrix)
 
-save(bio.rst.stack, file="bio_rst_stack.RData")
+save(bio.rst.stack, file="data/Ranunculaceae_bio_prob.RData")
+
 
 
 plot(occ.rst.stack[[1]])
