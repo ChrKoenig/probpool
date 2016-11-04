@@ -67,7 +67,9 @@ head(values(Simu_bio.rst.stack))
 plot(Simu_bio.rst.stack[[5]])
 
 
-river <- raster(nrows=15, ncols=15, vals = t(matrix(c(rep(1,6*15),rep(0.5,15),rep(0,15),rep(0.5,15),rep(1,6*15)),nrow=15,ncol=15)),xmn=0, xmx=15, ymn=0, ymx=15)
+river <- raster(nrows=15, ncols=15, vals = t(matrix(c(rep(1,6*15),rep(0.5,15),rep(0,15),rep(0.5,15),rep(1,6*15)),nrow=15,ncol=15)),xmn=-1, xmx=16, ymn=-1, ymx=16)
+river <- suit.rst.stack[[1]]
+extent(river)
 
 # replace NAs by 0
 river[is.na(river)] <- 1/100
@@ -92,11 +94,28 @@ distances <- as.matrix(distances)
 commuteDistance(spec.trans, matrix(c(14.5,0.5,6,7),2,2))
 commuteDistance(spec.trans, matrix(c(13.9,6,0,7),2,2))
 
+commuteDistance(spec.trans, matrix(c(47.21,47.3,5.8333331,5.9),2,2))
+commuteDistance(spec.trans, matrix(c(5.84, 6, 47.21, 48),2,2))
+
+extent(river)
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 plot(simu_occ_rst_stack[[1]])
 
 
-disp.simu.stack <- disp_pool(occurrence.surfaces = simu_occ_rst_stack, cond.surfaces=river, disp.ability = 10, longlat = FALSE)
+disp.simu.stack <- disp_pool(occurrence.surfaces = simu_occ_rst_stack, cond.surfaces=river, disp.ability = 100, longlat = FALSE)
 plot(simu_occ_rst_stack[[5]])
 plot(river)
 plot(disp.simu.stack[[5]])

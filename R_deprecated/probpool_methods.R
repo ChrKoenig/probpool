@@ -53,4 +53,3 @@ setMethod("plot", c("probpool"),
           }
 )
 
-
