@@ -57,7 +57,7 @@ dim( cooccur.probs2)
 int.matrix <- cooccur.probs2
 
 occurrence.surfaces <- simu_occ_rst_stack
-Simu_bio.rst.stack <- bio_pool(occurrence.surfaces, int.matrix, abundances=)
+Simu_bio.rst.stack <- bio_pool(occurrence.surfaces, int.matrix, abundance=TRUE)
 
 occurrence.surfaces2<-occurrence.surfaces[occurrence.surfaces,]
 
