@@ -64,13 +64,13 @@ range(values(Simu_bio.rst.stack[[5]]))
 plot(Simu_bio.rst.stack[[5]])
 
 par(mfrow=c(2,3))
-
-plot(simu_occ_rst_stack[[5]])
-plot(Simu_env_prob[[5]])
-plot(disp.simu.stack [[5]])
-plot(Simu_bio.rst.stack[[5]])
-#plot(Simu_env_prob[[5]]*disp.simu.stack[[5]])
-plot(Simu_env_prob[[5]]*disp.simu.stack[[5]]*Simu_bio.rst.stack[[5]])
+i<-10
+plot(simu_occ_rst_stack[[i]])
+plot(Simu_env_prob[[i]])
+plot(disp.simu.stack [[i]])
+plot(Simu_bio.rst.stack[[i]])
+#plot(Simu_env_prob[[i]]*disp.simu.stack[[i]])
+plot(Simu_env_prob[[i]]*disp.simu.stack[[i]]*Simu_bio.rst.stack[[i]])
 
 
 
