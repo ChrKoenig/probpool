@@ -49,22 +49,27 @@ plot(simu_occ_rst_stack[[2]])
 
 ###Checking bio pool for hte simulated data
 load("data/Simu_InteractionMatrix.RData")
-cooccur.probs2<-as.matrix(cooccur.probs)
-summary(cooccur.probs2)
-range(cooccur.probs2)
-dim( cooccur.probs2)
 
-int.matrix <- cooccur.probs2
+int.matrix <- Simu_InteractionMatrix
+mean(Simu_InteractionMatrix)
 
 occurrence.surfaces <- simu_occ_rst_stack
-Simu_bio.rst.stack <- bio_pool(occurrence.surfaces, int.matrix, abundance=TRUE)
+Simu_bio.rst.stack <- bio_pool(occurrence.surfaces, int.matrix, abundance=FALSE)
 
 occurrence.surfaces2<-occurrence.surfaces[occurrence.surfaces,]
 
 head(values(occurrence.surfaces))
 head(values(Simu_bio.rst.stack))
+range(values(Simu_bio.rst.stack[[5]]))
 
 plot(Simu_bio.rst.stack[[5]])
+
+plot(Simu_bio.rst.stack[[5]]/max(values(Simu_bio.rst.stack[[5]])))
+
+
+interactions.x <- t(sapply(1:nrow(occurrence.surfaces), function(y) occurrence.surfaces[y,]*int.matrix[,x]))
+interactions.x <- rowMeans(interactions.x)
+
 
 
 river <- raster(nrows=15, ncols=15, vals = t(matrix(c(rep(1,6*15),rep(0.5,15),rep(0,15),rep(0.5,15),rep(1,6*15)),nrow=15,ncol=15)),xmn=-1, xmx=16, ymn=-1, ymx=16)
