@@ -5,18 +5,38 @@ library(raster)
 ###################################################################
 ######################### CLASS DEFINITION ########################
 # Constructor function
-probpool = function(env.pool = NULL, disp.pool = NULL, bio.pool = NULL){
-  pools = list(env.pool = env.pool, disp.pool = disp.pool, bio.pool = bio.pool)
+probpool = function(env.pool = NULL, disp.pool = NULL, bio.pool = NULL, bio.pool.method = "modify"){
+  # bio.pool.method is either "modify" or "multiply"
+  pools = list(env.pool = env.pool, disp.pool = disp.pool, bio.pool = bio.pool, comb.pool = NULL)
   
   # Calculate comb.pool
-  comb.pool = disp.pool * env.pool # multiplied probabilitie  # modify probabilities
+  if(is.null(disp.pool)){disp.pool = 1}
+  if(is.null(env.pool)){env.pool = 1} 
+  comb.pool.raw = disp.pool * env.pool # multiply probabilities, equals 1 if none is provided
+  if(is.numeric(comb.pool.raw)){ # disp.pool and env.pool not provided, bio.pool is guaranteed to be present due to validity checks
+    if(bio.pool.method == "modify"){warning("No probabilities to modify. Calculating comb.pool from bio.pool only")}
+    pools$comb.pool = (bio.pool+1)/2
+  } else if(!is.null(bio.pool) & bio.pool.method == "multiply"){ 
+    pools$comb.pool = comb.pool.raw * (bio.pool+1)/2
+  } else if(!is.null(bio.pool) & bio.pool.method == "modify"){
+    pools$comb.pool = "XXXXX NOT IMPLEMENTED XXXXXX"
+  } else {
+    warning("No bio.pool provided. Ignoring bio.pool.method")
+    pools$comb.pool = comb.pool.raw
+  }
+  
+  # 2 facilitation_competition:  
+  # modify probabilities
+  # raster > 1 works
+  # values(raster) extracts all the stuff
   
   pool.count = length(which(!sapply(pools, is.null)))
   new("probpool", 
       pools = pools,
       pool.count = pool.count,
       species = names(pools[[min(which(!sapply(pools, is.null)))]]),
-      PSI = list(env.pool = sum(env.pool), disp.pool = sum(disp.pool), bio.pool = sum(bio.pool)),
+      PSI = list(env.pool = sum(pools$env.pool), disp.pool = sum(pools$disp.pool), 
+                 bio.pool = sum(pools$bio.pool), comb.pool = sum(pools$comb.pool)),
       slots = c("pools", "pool.count", "species", "PSI")
   )
 }

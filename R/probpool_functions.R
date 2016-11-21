@@ -96,41 +96,46 @@ disp_pool <- function(occurrence.surfaces, disp.ability, method=c("negexp","fatt
 
 
 
-# occurence.surfaces needs to be a raster stack including rasters of species occurances or abundances with values of 0 for absences and values > 0 for occurances. Values wil be scaled to range from 0 to 1
+# occurence.surfaces needs to be a raster stack including rasters of species occurences or abundances with values of 0 for absences and values > 0 for occurances. Values wil be scaled to range from 0 to 1
 # or the disp.pool, the env.pool or the product of both
 
 # int.matrix is a species by species matrix (may be asymmetric) with interactions assumed to be directed from the species in the row to the species in the colums
 
-bio_pool <- function(occurrence.surfaces, int.matrix, abundance=TRUE) {
-
+bio_pool <- function(occurrence.surfaces, interaction.matrix, abundance=TRUE) {
   occurrences <- values(occurrence.surfaces)
   occurrences <- occurrences[complete.cases(occurrences),]
+  
+  # Null probability
+  richness.mean = mean(rowSums(occurrences), na.rm = TRUE)
+  richness.total = dim(occurrences)[2]
+  null_prob = richness.mean/richness.total 
 
-  if (abundance) { 
+  if(abundance){ 
     occurrences <- occurrences/max(occurrences)
-  }else{
-    occurrences[occurrences>0] <- 1 
+  } else {
+    occurrences[occurrences > 0] <- 1 
   }
   
   # multiply the incoming interactions of each species x (columns in int.matrix)
   # with the occurrence/probability of all other species for the given site y
   interactions <- lapply(1:dim(occurrence.surfaces)[3], function(x) {
-    
-    interactions.x <- t(sapply(1:nrow(occurrences), function(y) occurrences[y,]*int.matrix[,x]))
+    interactions.x <- t(sapply(1:nrow(occurrences), function(y) occurrences[y,] * interaction.matrix[,x]))
     interactions.x <- rowMeans(interactions.x)
-  
     interactions.x.rst <- occurrence.surfaces[[x]]
     interactions.x.rst[!is.na(interactions.x.rst)] <- interactions.x
-  
     return(interactions.x.rst)
   })
 
-  interactions <- stack(interactions)      
-
+  interactions <- stack(interactions)     
   return(interactions)
 }
 
-
+prob.surface = example_env.pool
+prob.surface.inverse = 1-example_env.pool
+cells.positive = example_bio.pool > 0
+cells.negative = example_bio.pool < 0
+prob.surface.facilitated = prob.surface + (prob.surface.inverse[cells.positive] * example_bio.pool[cells.positive])
+prob.surface.competed = prob.surface + (prob.surface * cells.negative)
 # allD is a wrapper function for calcD that applies the calculation
 # of calcD to all cells and all species. It takes the full occupancy
 # matrix, the full pairwise distance matrix and a vector of each
