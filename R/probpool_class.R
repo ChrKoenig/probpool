@@ -102,9 +102,16 @@ setMethod("plot", c("probpool"),
               }
               if(is.null(x@pools$bio.pool)==FALSE)
               {
-                plotPoolProbs(x,"bio.pool",focalunit)
-                plotPoolPDF(x,"bio.pool",focalunit)
-                plotPoolCDF(x,"bio.pool",focalunit)
+                if(x@method=="simple_multiplication")
+                  {
+                  plotPoolProbs(x,"bio.pool",focalunit)
+                  plotPoolPDF(x,"bio.pool",focalunit)
+                  plotPoolCDF(x,"bio.pool",focalunit)  
+                }else{
+                  plotFacComp(x,"bio.pool",focalunit)
+                  plotPoolPDF(x,"bio.pool",focalunit)
+                  plotPoolCDF(x,"bio.pool",focalunit)
+                  }
               }
               if(is.null(x@pools$comb.pool)==FALSE)
               {
