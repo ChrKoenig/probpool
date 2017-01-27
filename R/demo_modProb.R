@@ -47,13 +47,13 @@ load("data/Ranunculaceae_occurrences.RData")
 load("data/Ranunculaceae_bio_prob.RData")
 
 N_total = dim(example_occurences)[3]
-N_mean = mean(values(sum(example_occurences)), na.rm = T)
+N_mean = mean(raster::values(sum(example_occurences)), na.rm = T)
 richness = sum(example_occurences)
 
 # 1. Rescaling approach
 probs_rescaled = (example_bio.pool+1)/2
 richness_rescaled = sum(probs_rescaled)
-N_mean_rescaled = mean(values(richness_rescaled), na.rm = T)
+N_mean_rescaled = mean(raster::values(richness_rescaled), na.rm = T)
 
 N_mean 
 N_mean_rescaled # Estimates way too high
@@ -72,9 +72,15 @@ N_mean_modified = mean(values(richness_modified), na.rm = T)
 N_mean
 N_mean_modified # not perfect, but closer
 
-plot(richness, col = terrain.colors(30), breaks = 1:30, legend = F)
+plot(richness, col = terrain.colors(30), breaks = 1:30)
 plot(richness_modified, col = terrain.colors(30), breaks = 1:30)
 
 # This is a much better estimate of the occurence probabilities, everything else (env + disp) being equal. Don't you think?
 # However, be aware that adopting this would invalidate the formula published in the original paper, since the bio.pool can not be 
 # treated as another factor that is simply multiplied with the rest. 
+
+# Finally, let's see if both approaches produce similar patterns, irrespective of the total species number.
+plot(richness_rescale)
+plot(richness_modified)
+
+# The argument during the retreat was, that only the relative differences between cells are telling, but not the absolute values. The maps show that the relative differences are very similar, but the new approach returns realistic species number estimates on top of that. I therefore don't see any convincing argument for keeping the rescaling+multiplication approach at all. 
