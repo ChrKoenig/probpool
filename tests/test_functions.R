@@ -32,6 +32,7 @@ plot(suit.rst.stack[[5]])
 
 # Simulated data
 load("data/Simu_occurrences.RData")
+load("data/Simu_env_prob.RData")
 
 disp.simu.stack <- disp_pool(occurrence.surfaces = simu_occ_rst_stack, disp.ability = 1, longlat = FALSE)
 plot(disp.simu.stack[[5]])
@@ -40,6 +41,33 @@ values(disp.simu.stack[[5]])
 
 plot(simu_occ_rst_stack[[2]])
 
+<<<<<<< HEAD
+=======
+###Checking bio pool for hte simulated data
+load("data/Simu_InteractionMatrix.RData")
+
+int.matrix <- Simu_InteractionMatrix
+mean(Simu_InteractionMatrix)
+
+occurrence.surfaces <- simu_occ_rst_stack
+Simu_bio.rst.stack <- bio_pool(occurrence.surfaces, int.matrix, abundance=FALSE)
+
+head(values(occurrence.surfaces))
+head(values(Simu_bio.rst.stack))
+range(values(Simu_bio.rst.stack[[5]]))
+
+plot(Simu_bio.rst.stack[[5]])
+
+par(mfrow=c(2,3))
+i<-10
+plot(simu_occ_rst_stack[[i]])
+plot(Simu_env_prob[[i]])
+plot(disp.simu.stack [[i]])
+plot(Simu_bio.rst.stack[[i]])
+#plot(Simu_env_prob[[i]]*disp.simu.stack[[i]])
+plot(Simu_env_prob[[i]]*disp.simu.stack[[i]]*Simu_bio.rst.stack[[i]])
+
+>>>>>>> d6473c9b4d640b2360c6fc5e86e809cb2aaee465
 
 
 # create a conductance layer with barrier
