@@ -32,6 +32,11 @@ myseq_modified = sapply(myseq, modify_prob, p = 0.5)
 
 myseq_scaled == myseq_modified
 
+# Patrick: I like this! One thought to not forget: In the original formula we forgot to account for positive interactions.
+# This is why we do all these modifications here. In case a user only has negative interactions measured the original approach
+# can still be used and should therefore be implemented as well (maxybe not as default though). We can the explain that to
+# account for positive interactions we modified the original approach as follows...
+
 # But assuming a base probability of 0.5 is still rather arbititrary, and in fact in most cases wrong (i.e. it will yield incorrect 
 # estimates of species per site). Even when the user does not provide an env.pool and a disp.pool, he/she has to provide 
 # distribution data for the species that serve as a basis for the biotic interactions. This gives us two important pieces of 
@@ -80,7 +85,7 @@ plot(richness_modified, col = terrain.colors(30), breaks = 1:30)
 # treated as another factor that is simply multiplied with the rest. 
 
 # Finally, let's see if both approaches produce similar patterns, irrespective of the total species number.
-plot(richness_rescale)
+plot(richness_rescaled)
 plot(richness_modified)
 
 # The argument during the retreat was, that only the relative differences between cells are telling, but not the absolute values. The maps show that the relative differences are very similar, but the new approach returns realistic species number estimates on top of that. I therefore don't see any convincing argument for keeping the rescaling+multiplication approach at all. 
