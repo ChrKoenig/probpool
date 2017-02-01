@@ -52,6 +52,8 @@ disp_pool <- function(occurrence.surfaces, disp.ability, method=c("negexp","fatt
     
   } else {
     
+    # TODO add extra margin around conductance layers?
+    
     # replace NAs by 0
     cond.surfaces[is.na(cond.surfaces)] <- 1/100
     # truncation: replace <1/100 by 0                                   
@@ -200,6 +202,8 @@ plotRasterPool<-function(probpool,pool)
   raster::plot(probpool@PSI[[pool]], main=pool)
 }
 
+
+#TODO: Function to convert species by sites to raster stack
 
 
       
