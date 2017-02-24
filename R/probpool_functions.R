@@ -103,8 +103,8 @@ disp_pool <- function(occurrence.surfaces, disp.ability, method=c("negexp","fatt
 
 # int.matrix is a species by species matrix (may be asymmetric) with interactions assumed to be directed from the species in the row to the species in the colums
 
-bio_pool <- function(occurrence.surfaces, interaction.matrix, abundance=TRUE) {
-  occurrences <- values(occurrence.surfaces)
+bio_pool <- function(occurrences, interaction.matrix, abundance=TRUE) {
+  occurrences <- values(occurences)
   occurrences <- occurrences[complete.cases(occurrences),]
   
   # Null probability
@@ -120,10 +120,10 @@ bio_pool <- function(occurrence.surfaces, interaction.matrix, abundance=TRUE) {
   
   # multiply the incoming interactions of each species x (columns in int.matrix)
   # with the occurrence/probability of all other species for the given site y
-  interactions <- lapply(1:dim(occurrence.surfaces)[3], function(x) {
+  interactions <- lapply(1:dim(occurences)[3], function(x) {
     interactions.x <- t(sapply(1:nrow(occurrences), function(y) occurrences[y,] * interaction.matrix[,x]))
     interactions.x <- rowMeans(interactions.x)
-    interactions.x.rst <- occurrence.surfaces[[x]]
+    interactions.x.rst <- occurences[[x]]
     interactions.x.rst[!is.na(interactions.x.rst)] <- interactions.x
     return(interactions.x.rst)
   })
@@ -178,40 +178,40 @@ allE = function(occupancy,environment=NULL, method)
 
 
 # Function to plot pool for a single focal unit defined by focalunit
-plotPoolProbs<-function(probpool,pool,focalunit)
+plotPoolProbs<-function(prob.pool,pool,focalunit)
 {
   focal<-cbind(focalunit[1],focalunit[2])
-  loc<-extract(probpool@pools[[pool]],focal, cellnumbers=TRUE)
-  barplot(rev(sort(probpool@pools[[pool]][loc[1]][1,])), ylim=c(0,1), ylab = "Probabilities", xlab= "Species", main = pool)
+  loc<-extract(prob.pool@pools[[pool]],focal, cellnumbers=TRUE)
+  barplot(rev(sort(prob.pool@pools[[pool]][loc[1]][1,])), ylim=c(0,1), ylab = "Probabilities", xlab= "Species", main = pool)
 }
 
 # Function to plot pool probability density function
-plotPoolPDF<-function(probpool,pool,focalunit)
+plotPoolPDF<-function(prob.pool,pool,focalunit)
 {
   focal<-cbind(focalunit[1],focalunit[2])
-  loc<-extract(probpool@pools[[pool]],focal, cellnumbers=TRUE)
-  barplot(dpoibin(seq(1,length(probpool@pools[[pool]][loc[1]][1,]),1), probpool@pools[[pool]][loc[1]][1,]), names.arg=1:length(probpool@pools[[pool]][loc[1]][1,]), ylab = "Probabilities", xlab= "Species", main = pool)
+  loc<-extract(prob.pool@pools[[pool]],focal, cellnumbers=TRUE)
+  barplot(dpoibin(seq(1,length(prob.pool@pools[[pool]][loc[1]][1,]),1), prob.pool@pools[[pool]][loc[1]][1,]), names.arg=1:length(prob.pool@pools[[pool]][loc[1]][1,]), ylab = "Probabilities", xlab= "Species", main = pool)
 }
 
 # Function to plot pool cumulative density function
-plotPoolCDF<-function(probpool,pool,focalunit)
+plotPoolCDF<-function(prob.pool,pool,focalunit)
 {
   focal<-cbind(focalunit[1],focalunit[2])
-  loc<-extract(probpool@pools[[pool]],focal, cellnumbers=TRUE)
-  barplot(ppoibin(seq(1,length(probpool@pools[[pool]][loc[1]][1,]),1), probpool@pools[[pool]][loc[1]][1,]), ylim=c(0,1), names.arg=1:length(probpool@pools[[pool]][loc[1]][1,]), ylab = "Probabilities", xlab= "Species", main = pool)
+  loc<-extract(prob.pool@pools[[pool]],focal, cellnumbers=TRUE)
+  barplot(ppoibin(seq(1,length(prob.pool@pools[[pool]][loc[1]][1,]),1), prob.pool@pools[[pool]][loc[1]][1,]), ylim=c(0,1), names.arg=1:length(prob.pool@pools[[pool]][loc[1]][1,]), ylab = "Probabilities", xlab= "Species", main = pool)
 }
 
-plotFacComp<-function(probpool,pool,focalunit)
+plotFacComp<-function(prob.pool,pool,focalunit)
 {
   focal<-cbind(focalunit[1],focalunit[2])
-  loc<-extract(probpool@pools[[pool]],focal, cellnumbers=TRUE)
-  barplot(rev(sort(probpool@pools[[pool]][loc[1]][1,])), ylim=c(-1,1), ylab = "Probabilities", xlab= "Species", main = pool, col="red")
+  loc<-extract(prob.pool@pools[[pool]],focal, cellnumbers=TRUE)
+  barplot(rev(sort(prob.pool@pools[[pool]][loc[1]][1,])), ylim=c(-1,1), ylab = "Probabilities", xlab= "Species", main = pool, col="red")
 }
 
 # Function to plot pool as a raster
-plotRasterPool<-function(probpool,pool)
+plotRasterPool<-function(prob.pool,pool)
 {
-  raster::plot(probpool@PSI[[pool]], main=pool)
+  raster::plot(prob.pool@PSI[[pool]], main=pool)
 }
 
 
