@@ -6,68 +6,67 @@ library(raster)
 # Class
 setClass("prob.pool",
          slots = c(pools = "list",
-                   pool.count = "numeric",
                    species = "character",
+                   interaction.method = "character",
                    PSI = "list",
                    slots = "character"),
          validity = is.valid.prob.pool)
 
 # Constructor function
-prob.pool = function(env.pool = NULL, disp.pool = NULL, 
-                     interaction.matrix = NULL, interaction.method = 1, occurences = NULL){
-  pools = list(env.pool = env.pool, disp.pool = disp.pool, bio.pool = bio.pool, comb.pool = NULL)
+prob.pool = function(env.pool = NULL, disp.pool = NULL, occurences = NULL,
+                     interaction.matrix = NULL, interaction.method = 1){
   
-  # Calculate comb.pool
-  if(is.null(env.pool)){env.pool = 1} 
-  if(is.null(disp.pool)){disp.pool = 1}
-  disp.env.pool = disp.pool * env.pool # multiply probabilities, equals 1 if none is provided
-
-  # 2 facilitation_competition:  
-  # modify probabilities
-  # raster > 1 works
-  # values(raster) extracts all the stuff
-  pool.count = length(which(!sapply(pools, is.null)))
-  new("prob.pool", 
-      pools = pools,
-      pool.count = pool.count,
-      species = names(pools[[min(which(!sapply(pools, is.null)))]]),
-      PSI = list(env.pool = sum(pools$env.pool), disp.pool = sum(pools$disp.pool), 
-                 bio.pool = sum(pools$bio.pool), comb.pool = sum(pools$comb.pool)),
-      slots = c("pools", "pool.count", "species", "PSI")
-  )
+  pp = new("prob.pool", 
+           pools = list(env.pool = env.pool, disp.pool = disp.pool, occurences = occurences, prob.pool = NULL),
+           species = names(pools[[min(which(!sapply(pools, is.null)))]]),
+           interaction.method = c("Modification","Multiplication")[interaction.method],
+           PSI = list(env.pool = sum(pools$env.pool), disp.pool = sum(pools$disp.pool), 
+                      occurences = sum(pools$occurences), prob.pool = sum(pools$prob.pool)),
+           slots = c("pools", "species", "interaction.method", "PSI"))
   
-  
-  if(is.numeric(comb.pool.raw)){ # disp.pool and env.pool not provided, bio.pool is guaranteed to be present due to validity checks
-    if(bio.pool.method == "modify"){
-      pools$comb.pool = (bio.pool+1)/2
-    } else if(!is.null(bio.pool) & bio.pool.method == "multiply"){
-      warning("Multiplication approach is not reliable when positive interactions are present.")
-      pools$comb.pool = comb.pool.raw * (bio.pool+1)/2
-    } else if(!is.null(bio.pool) & bio.pool.method == "modify"){
-      pools$comb.pool = "XXXXX NOT IMPLEMENTED XXXXXX"
-    } else {
-      warning("No bio.pool provided. Ignoring bio.pool.method")
-      pools$comb.pool = comb.pool.raw
+  valid_pool = c(!is.null(env.pool), !is.null(disp.pool))
+  if(is.null(pp@interaction.matrix)){ # Easy case: no interactions, ignore occurences
+    pp@pools$prob.pool = ifelse(valid_pool[1], pp@env.pool, 1) * ifelse(valid_pool[1], pp@disp.pool, 1)
+  } else { # interactions present
+    if(any(valid_pool)){
+      if(interaction.method = 1){
+        # modify(xxx)
+      } else {
+        # mul
+      }
     }
+  } else {
+     # multiply/modify occurences
   }
 }
 
 # Function for validity check
 is.valid.prob.pool = function(object){
   errors = character()
-  if(all(sapply(object@pools, is.null))){ # Check arguments
-    errors = c(errors,"no probabilities provided")
+  if(all(sapply(object@pools, is.null))){
+    errors = c(errors,"Please provide at least one of the following arguments: env.pool, disp.pool, occurences")
   }
-  for(pool in object@pools){ # Check types
-    if(!(extends(class(pool), "Raster") | is.matrix(pool) | is.null(pool))){
-      errors = c(errors, "Invalid pool type. Please provide a raster object or a matrix")
-    }
+  
+  if(is.null(object@interaction.matrix) & is.null(object@pools$env.pool) & is.null(object@pools$disp.pool)){
+    errors = c(errors,"Interaction.matrix is missing.")
   }
+ 
+  if(!all(sapply(object@pools, function(pool) {extends(class(pool), "Raster") | is.null(pool)}))){ # check types
+      errors = c(errors, "Invalid argument. Please provide a raster object.")
+  }
+  
+  if(Reduce(all.equal, lapply(object@pools[!sapply(object@pools, is.null)], names))){ # check species names
+    errors = c(errors, "Species names do not match.")
+  }
+  
   pool.dims = matrix(sapply(object@pools, dim)) # Check dimensions
   if(any(apply(pool.dims, 1, function(x) length(unique(x)) != 1))){
-    errors = c(errors, "All pools need to have the same dimensions")
+    errors = c(errors, "All raster objects need to have the same dimensions.")
   }
-  # check species names
+  
+  if(is.na(interaction.method)){
+    errors = c(errors, "Unknown interaction method. Choose '1' for modification or '2' for multiplication")
+  }
   
   return(ifelse(length(errors) == 0, TRUE, errors))
 }

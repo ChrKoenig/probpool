@@ -51,9 +51,9 @@ myseq_scaled == myseq_modified
 load("data/Ranunculaceae_occurrences.RData")
 load("data/Ranunculaceae_bio_prob.RData")
 
-N_total = dim(example_occurences)[3]
-N_mean = mean(raster::values(sum(example_occurences)), na.rm = T)
-richness = sum(example_occurences)
+N_total = dim(occ.rst.stack)[3]
+N_mean = mean(raster::values(sum(occ.rst.stack)), na.rm = T)
+richness = sum(occ.rst.stack)
 
 # 1. Rescaling approach
 probs_rescaled = (example_bio.pool+1)/2
