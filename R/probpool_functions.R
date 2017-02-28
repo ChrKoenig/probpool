@@ -106,11 +106,6 @@ disp_pool <- function(occurrence.surfaces, disp.ability, method=c("negexp","fatt
 bio_pool <- function(occurrences, interaction.matrix, abundance=TRUE) {
   occurrences <- values(occurences)
   occurrences <- occurrences[complete.cases(occurrences),]
-  
-  # Null probability
-  richness.mean = mean(rowSums(occurrences), na.rm = TRUE)
-  richness.total = dim(occurrences)[2]
-  null_prob = richness.mean/richness.total 
 
   if(abundance){ 
     occurrences <- occurrences/max(occurrences)
