@@ -32,7 +32,7 @@ calcD = function(occupancy, distance, k, method = "negexp")
 # NAs will be replaced by 0 and 0s will be replaced by small value; set variable for this?
 
 
-disp_pool <- function(occurrence.surfaces, disp.ability, method=c("negexp","fattail"),cond.surfaces=NULL, longlat=TRUE) {
+disp.pool <- function(occurrence.surfaces, disp.ability, method=c("negexp","fattail"),cond.surfaces=NULL, longlat=TRUE) {
   
   # TODO: check extent of rasters, type of data etc.
   
@@ -101,7 +101,7 @@ disp_pool <- function(occurrence.surfaces, disp.ability, method=c("negexp","fatt
 # occurence.surfaces needs to be a raster stack including rasters of species occurences or abundances with values of 0 for absences and values > 0 for occurances. Values wil be scaled to range from 0 to 1
 # or the disp.pool, the env.pool or the product of both
 
-# int.matrix is a species by species matrix (may be asymmetric) with interactions assumed to be directed from the species in the row to the species in the colums
+# interaction.matrix is a species by species matrix (may be asymmetric) with interactions assumed to be directed from the species in the row to the species in the colums
 
 bio_pool <- function(occurrences, interaction.matrix, abundance=TRUE) {
   occurrences <- values(occurences)
@@ -149,7 +149,7 @@ allD = function(occupancy,distance,k,method = "negexp")
 # 1. consider the distance between a focal site and the closest (in 
 # environmental space) occupied site, and rank it against all distances
 # 2. use beals smoothing
-calcE = function(occupancy,envdist,site)
+calcE = function(occupancy, envdist,site)
 {
   index = which(occupancy > 0)
   es = 1-length(which(envdist[,site] < min(envdist[index,site])))/256

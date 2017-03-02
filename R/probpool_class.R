@@ -2,133 +2,155 @@ library(methods)
 library(raster)
 
 ###################################################################
+# Probabilistic species pool class definition
+# author: Christian König
+# date:   March 2017
+#
+# current issues:
+# - no abundance support in occurrences data
+# - not thoroughly tested
+# - disp.pool creation should be included in the function call instead of a separate function
+# 
+###################################################################
 ######################### CLASS DEFINITION ########################
-# Class
-setClass("prob.pool",
-         slots = c(pools = "list",
-                   species = "character",
-                   interaction.method = "character",
-                   PSI = "list",
-                   slots = "character"),
-         validity = is.valid.prob.pool)
-
-# Function for validity check
+# Validity check function
 is.valid.prob.pool = function(object){
-  errors = character()
   if(all(sapply(object@pools, is.null))){ 
-    errors = c(errors,"Please provide at least one of the following arguments: env.pool, disp.pool, occurences")
+    return("Please provide at least one of the following arguments: env.pool, disp.pool, occurrences")
   }
   if(is.null(object@interaction.matrix) & is.null(object@pools$env.pool) & is.null(object@pools$disp.pool)){
-    errors = c(errors,"Interaction.matrix is missing.")
+    return("Interaction.matrix is missing.")
+  }
+  if(is.na(object@interaction.method)){
+    return("Unknown interaction.method. Choose '1' for modification or '2' for multiplication")
   }
   if(!all(sapply(object@pools, function(pool) {extends(class(pool), "Raster") | is.null(pool)}))){ # check types
-    errors = c(errors, "Invalid argument. Please provide a raster object.")
-  }
-  if(Reduce(all.equal, lapply(object@pools[!sapply(object@pools, is.null)], names))){ # check species names
-    errors = c(errors, "Species names do not match.")
+    return("Invalid argument. Please provide a raster object.")
   }
   pool.dims = matrix(sapply(object@pools, dim)) # Check dimensions
   if(any(apply(pool.dims, 1, function(x) length(unique(x)) != 1))){
-    errors = c(errors, "All raster objects need to have the same dimensions.")
+    return("All raster objects need to have the same dimensions.")
   }
-  if(is.na(interaction.method)){
-    errors = c(errors, "Unknown interaction.method. Choose '1' for modification or '2' for multiplication")
+  if(!all(sapply(object@pools, function(x){is.null(x) || all.equal(names(object@pools$prob.pool), names(x))}))){ # check species names
+    return("Species names do not match.")
   }
-  if(interaction.method == 2 & !is.null(interaction.matrix) & is.null(occurences)){
-    errors = c(errors, "Multiplication approach (interaction.method = 2) requires species occurences.")
+  if(object@interaction.method == 2 & !is.null(object@interaction.matrix) & is.null(object@pools$occurrences)){
+    return("Multiplication approach (interaction.method = 2) requires species occurrences.")
   }
-  return(ifelse(length(errors) == 0, TRUE, errors))
+  # TODO: Check for abundance data and rescale if prob > 1
+  return(TRUE)
 }
+
+# Class skeleton
+setClass("prob.pool",
+         slots = c("pools", 
+                   "interaction.matrix",
+                   "interaction.method",
+                   "species.tot",
+                   "species.avg",
+                   "species.names",
+                   "PSI",
+                   "slots"),
+         validity = is.valid.prob.pool)
+
 
 # Constructor function
-prob.pool = function(env.pool = NULL, disp.pool = NULL, occurences = NULL,
+prob.pool = function(env.pool = NULL, disp.pool = NULL, occurrences = NULL,
                      interaction.matrix = NULL, interaction.method = 1){
   
-  pp = new("prob.pool", 
-           pools = list(env.pool = env.pool, disp.pool = disp.pool, occurences = occurences, prob.pool = NULL),
-           species = names(pools[[min(which(!sapply(pools, is.null)))]]),
-           interaction.method = c("Modification","Multiplication")[interaction.method],
-           PSI = list(env.pool = sum(pools$env.pool), disp.pool = sum(pools$disp.pool), 
-                      occurences = sum(pools$occurences), prob.pool = sum(pools$prob.pool)),
-           slots = c("pools", "species", "interaction.method", "PSI"))
-  
-  valid_pool = c(!is.null(env.pool), !is.null(disp.pool))
-  if(is.null(interaction.matrix)){ # Easy case: no interactions, ignore occurences
-    pools$prob.pool = ifelse(valid_pool[1], env.pool, 1) * ifelse(valid_pool[1], disp.pool, 1)
+  prob.pool = NULL
+  if(is.null(interaction.matrix) & !is.null(env.pool) | !is.null(disp.pool)){ # No interactions, multiply env * disp
+    prob.pool = multiply.pools(env.pool, disp.pool)
+    interaction.method = 3
   } else { # Interactions present
-    if(interaction.method == 1){ # Modification approach
-      if(any(valid_pool)){ # Base probabilities from env/disp layer
-        prob.pool = ifelse(valid_pool[1], env.pool, 1) * ifelse(valid_pool[1], disp.pool, 1)
-        multiply.prob(occurences, interaction.matrix, abundance = T) 
-      } else{ # Estimate base probabilities from occurence layer
-        n_total = dim(occurences)[3]
-        n_mean = mean(raster::values(sum(occurences)), na.rm = T)
-        b = n_mean/n_total
-        
-        interaction_values = values(sum(example_bio.pool))
-        interaction_values_modified = sapply(interaction_values, FUN = modify_prob, p = N_mean)
-        richness_modified = richness
-        values(richness_modified) = interaction_values_modified
-        N_mean_modified = mean(values(richness_modified), na.rm = T)
-      }
-    } else { # Multiplication approach
-      warning("Caution: Results are not interpretable as probabilities using this interaction.method.")
-      interactions = multiply.prob(occurences, interaction_matrix, abundance = T)
-      if(any(valid_pool)){ # Multiply interaction values with probabilities from env/disp layer
-        prob.pool = ifelse(valid_pool[1], pp@env.pool, 1) * ifelse(valid_pool[1], pp@disp.pool, 1)
-        prob.pool.final = multiply.prob(prob.pool, interaction.matrix, abundance = T)
-      } else{ # Multiply interaction values with occurence layer and rescale to 0-1
-        prob.pool = multiply.prob(occurences, interaction.matrix, abundance = T) 
-        prob.pool.final = (prob.pool.final + 1) / 2# rescale
-      }
+    if(!is.null(env.pool) || !is.null(disp.pool)){ # Base probabilities from env/disp layer
+      prob.pool.raw = multiply.pools(env.pool, disp.pool)
+      prob.pool = calc.prob(prob.pool.raw, interaction.matrix, interaction.method)
+    } else { # Estimate base probabilities from occurence layer
+      occurrences = calc(occurrences, function(x){x[x>1] = 1; x}) # Convert abundance to occurrence
+      n.total = dim(occurrences)[3]
+      n.mean = mean(raster::values(sum(occurrences)), na.rm = T)
+      prob.pool.raw = occurrences 
+      values(prob.pool.raw) = n.mean/n.total # Assign uniform distribution to raster
+      prob.pool = calc.prob(prob.pool.raw, interaction.matrix, interaction.method)
     }
   } 
-}
-
-
-modify.prob = function(probabilities, interaction.matrix){ 
-  modify = function(p,b){
-    if(is.na(p) | is.na(b)){return(NA)}
-    if(b > 0){return(p + (1-p)*b)}
-    if(b <= 0){return(p + (p*b))}
-  }
-  probabilities <- values(probabilities)
-  probabilities <- probabilities[complete.cases(probabilities),]
-}
-
-multiply.prob <- function(probabilities, interaction.matrix, abundance = TRUE){
-  probabilities <- values(probabilities)
-  probabilities <- probabilities[complete.cases(probabilities),]
   
-  if(abundance){ 
-    probabilities <- probabilities/max(probabilities)
+  # Create prob.pool object
+  result = new("prob.pool", 
+               pools = list(env.pool = env.pool, 
+                            disp.pool = disp.pool, 
+                            occurrences = occurrences, 
+                            prob.pool = prob.pool),
+               interaction.matrix = interaction.matrix,
+               interaction.method = c("Modification", "Multiplication", "None")[interaction.method],
+               species.tot = length(names(prob.pool)),
+               species.avg = round(mean(raster::values(sum(prob.pool)), 1, na.rm = T)),
+               species.names = names(prob.pool),
+               PSI = list(env.pool = if(is.null(env.pool)){NA} else {sum(env.pool)},
+                          disp.pool = if(is.null(disp.pool)){NA} else {sum(disp.pool)},
+                          occurrences = if(is.null(occurrences)){NA} else {sum(occurrences)},
+                          prob.pool = sum(prob.pool)),
+               slots = c("pools","interaction.matrix","interaction.method", "species.tot", "species.avg", "species","PSI"))
+}
+
+#####################################################################
+########################## HELPER FUNCTIONS #########################
+multiply.pools = function(env.pool, disp.pool){
+  if(is.null(env.pool)){
+    return(disp.pool)
+  } else if(is.null(disp.pool)){
+    return(env.pool)
   } else {
-    probabilities[probabilities > 0] <- 1 
+    return(env.pool * disp.pool)
+  }
+}
+
+calc.prob = function(probabilities, interaction.matrix, interaction.method){
+  if(interaction.method == 2){
+    warning("Caution: Results are not interpretable as probabilities using this interaction.method.")
   }
   
-  # multiply the incoming interactions of each species x (columns in int.matrix)
-  # with the occurrence of all other species for the given site y
-  interactions <- lapply(1:dim(probabilities)[3], function(x) {
-    interactions.x <- t(sapply(1:nrow(probabilities), function(y) probabilities[y,] * interaction.matrix[,x]))
-    interactions.x <- rowMeans(interactions.x)
-    interactions.x.rst <- probabilities[[x]]
-    interactions.x.rst[!is.na(interactions.x.rst)] <- interactions.x
-    return(interactions.x.rst)
+  modify = function(probability, interaction){
+    if(is.na(probability) | is.na(interaction)){return(NA)}
+    if(interaction > 0){return(probability + (1-probability)*interaction)}
+    if(interaction <= 0){return(probability + (probability*interaction))}
+  }
+  
+  prob.pool = calc(probabilities, function(species.cell){
+    interaction = sapply(1:length(species.cell), function(species.index){ 
+      species.cell * interaction.matrix[,species.index]
+    })
+    interaction = rowMeans(interaction)
+    if(interaction.method == 1){
+      warning("Test")
+      prob.cell = mapply(modify, species.cell, interaction)
+    } else if(interaction.method == 2){
+      interaction = (interaction + 1) / 2
+      prob.cell = species.cell * interaction
+    }
+    return(prob.cell)
   })
-  interactions <- stack(interactions)     
-  return(interactions)
 }
-###################################################################
+
+#####################################################################
 ######################### METHOD DEFINITIONS ########################
 setMethod("summary", "prob.pool",  function(object, ...){
   cat("Probabilistic species pool \n\n")
-  cat(paste("Pools:\t", paste(names(which(!sapply(object@pools, is.null))), collapse = ", "), sep = ""), "\n")
-  cat(paste("Species:\t", length(object@species), "\n", sep = ""))
+  cat(paste("Pools              : ", paste(names(which(!sapply(object@pools, is.null))), collapse = ", "), sep = ""), "\n")
+  cat(paste("Species (total)    : ", object@species.tot, "\n", sep = ""))
+  cat(paste("Species (avg/cell) : ", object@species.avg, "\n", sep = ""))
+  cat(paste("Interaction method : ", object@interaction.method, "\n", sep = ""))
+  cat(paste("Resolution         : ", paste(round(res(object@pools$prob.pool), 3), collapse = " x "), " (x,y)\n", sep = ""))
+  cat(paste("Extent             : ", paste(round(object@pools$prob.pool@extent[1:4], 3), collapse = ", "), " (xmin, xmax, ymin, ymax)", sep = ""))
 })
 
 setMethod("print", "prob.pool", function(x){
   summary(x)
 })
+
+
+
 
 setMethod("plot", c("prob.pool"),
           function(x, focalunit=FALSE,...)
