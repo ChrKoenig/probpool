@@ -56,7 +56,7 @@ N_mean = mean(raster::values(sum(occ.rst.stack)), na.rm = T)
 richness = sum(occ.rst.stack)
 
 # 1. Rescaling approach
-probs_rescaled = (example_bio.pool+1)/2
+probs_rescaled = (bio.rst.stack+1)/2
 richness_rescaled = sum(probs_rescaled)
 N_mean_rescaled = mean(raster::values(richness_rescaled), na.rm = T)
 
@@ -68,7 +68,7 @@ plot(richness, col = terrain.colors(30), breaks = 1:30)
 plot(richness_rescaled, col = terrain.colors(30), breaks = 1:30) # I mean really, no one would consider this a valid result.
 
 # 2. Modification approach
-interaction_values = values(sum(example_bio.pool))
+interaction_values = values(sum(bio.rst.stack))
 interaction_values_modified = sapply(interaction_values, FUN = modify_prob, p = N_mean)
 richness_modified = richness
 values(richness_modified) = interaction_values_modified
