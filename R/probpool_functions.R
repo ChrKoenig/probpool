@@ -78,7 +78,7 @@ disp.pool <- function(occurrence.surfaces, disp.ability, method=c("negexp","fatt
         spec.trans <- transition(cond.surfaces[[x]], mean, 8)
         # geocorrection
         spec.trans <- geoCorrection(spec.trans, type="c")
-      
+        
         # calculate commute distances
         distances <- commuteDistance(spec.trans, occurrences[,c(1:2)])/2
         distances <- as.matrix(distances)
@@ -106,7 +106,7 @@ disp.pool <- function(occurrence.surfaces, disp.ability, method=c("negexp","fatt
 bio_pool <- function(occurrences, interaction.matrix, abundance=TRUE) {
   occurrences <- values(occurences)
   occurrences <- occurrences[complete.cases(occurrences),]
-
+  
   if(abundance){ 
     occurrences <- occurrences/max(occurrences)
   } else {
@@ -122,17 +122,23 @@ bio_pool <- function(occurrences, interaction.matrix, abundance=TRUE) {
     interactions.x.rst[!is.na(interactions.x.rst)] <- interactions.x
     return(interactions.x.rst)
   })
-
+  
   interactions <- stack(interactions)     
   return(interactions)
 }
 
-prob.surface = example_env.pool
-prob.surface.inverse = 1-example_env.pool
-cells.positive = example_bio.pool > 0
-cells.negative = example_bio.pool < 0
-prob.surface.facilitated = prob.surface + (prob.surface.inverse[cells.positive] * example_bio.pool[cells.positive])
-prob.surface.competed = prob.surface + (prob.surface * cells.negative)
+modify_prob = function(p, b){
+  # p is the base probability that comes from the env.pool and/or the disp.pool
+  # b is the biotic interaction factor (not actually a probability)
+  b_pos = b_neg = b
+  b_pos[b_pos < 0] = 0 # all positive interactions
+  b_neg[b_neg > 0] = 0 # all negative interactions
+  p_mod = p + (1 - p) * b_pos # facilitation (positive interations, asymptotic to p = 1)
+  p_mod = p_mod + (p_mod * b_neg) # competition (negative inteaction, asymptotic to p = 0)
+  return(p_mod)
+}
+
+
 # allD is a wrapper function for calcD that applies the calculation
 # of calcD to all cells and all species. It takes the full occupancy
 # matrix, the full pairwise distance matrix and a vector of each
@@ -213,4 +219,3 @@ plotRasterPool<-function(prob.pool,pool)
 #TODO: Function to convert species by sites to raster stack
 
 
-      

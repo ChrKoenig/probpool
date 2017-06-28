@@ -89,3 +89,33 @@ plot(richness_rescaled)
 plot(richness_modified)
 
 # The argument during the retreat was, that only the relative differences between cells are telling, but not the absolute values. The maps show that the relative differences are very similar, but the new approach returns realistic species number estimates on top of that. I therefore don't see any convincing argument for keeping the rescaling+multiplication approach at all. 
+
+
+
+####-------------------------- Test Code -----------------------------####
+rm(list=ls())
+
+load("data/Ranunculaceae_occurrences.RData")
+load("data/Ranunculaceae_disp_prob.RData")
+load("data/Ranunculaceae_env_prob.RData")
+load("data/Ranunculaceae_interactions.RData")
+
+# create interaction matrix
+require(cooccur)
+require(plyr)
+spec_site = adply(names(occ.rst.stack), 1, .fun = function(name){values(occ.rst.stack[[name]])}, .id = NULL)
+spec_site = spec_site[, apply(spec_site, 2, function(x){!all(is.na(x))})]
+rownames(spec_site) = names(occ.rst.stack)
+interaction.matrix = cooccur(spec_site, thresh = FALSE, spp_names = TRUE, only_effects = TRUE, eff_standard = TRUE,
+                             eff_matrix = TRUE) # takes > 10 minutes
+save(interaction.matrix, file = "data/Ranunculaceae_interactions.RData")
+
+##########
+test_probpool = prob.pool(suit.rst.stack, occurrences = occ.rst.stack,
+                          interaction.matrix = interaction.matrix, interaction.method = 1)
+
+
+par(mfrow = c(1,1))
+plot(test_probpool@pools$disp.pool[[5]])
+plot(test_probpool@pools$env.pool[[5]])
+plot(test_probpool@pools$prob.pool[[43])
