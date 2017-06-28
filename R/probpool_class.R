@@ -46,10 +46,10 @@ setClass("prob.pool",
          slots = c("pools", 
                    "interaction.matrix",
                    "interaction.method",
-                   "species.tot",
-                   "species.avg",
                    "species.names",
-                   "PSI",
+                   "species.total",
+                   "species.mean",
+                   "species.richness",
                    "slots"),
          validity = is.valid.prob.pool)
 
@@ -93,7 +93,7 @@ prob.pool = function(env.pool = NULL, disp.pool = NULL, occurrences = NULL,
                           disp.pool = if(is.null(disp.pool)){NA} else {sum(disp.pool)},
                           occurrences = if(is.null(occurrences)){NA} else {sum(occurrences)},
                           prob.pool = sum(prob.pool)),
-               slots = c("pools","interaction.matrix","interaction.method", "species_names", "species.total", "species.mean", "species.richness"))
+               slots = c("pools","interaction.matrix","interaction.method", "species.names", "species.total", "species.mean", "species.richness"))
 }
 
 #####################################################################
@@ -156,6 +156,14 @@ setMethod("print", "prob.pool", function(object){
 
 
 setMethod("plot", c("prob.pool"), function(object){
+  pools = !sapply(object@pools, is.null)
+  pools = pools[pools]
+  sapply(object@species.richness[which(pools)], function(x) range(values(x), na.rm = T))
+  
+  par(mfrow=c(1, length(pools)))
+  for(i in 1:length(pools))
+  sapply(object@pools[pools], FUN = function(x) raster::plot(sum(x)))
+  plot(sum(object@pools$env.pool))
   
   if(length(focalunit)==2)
             {
