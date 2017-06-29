@@ -111,10 +111,24 @@ interaction.matrix = cooccur(spec_site, thresh = FALSE, spp_names = TRUE, only_e
 save(interaction.matrix, file = "data/Ranunculaceae_interactions.RData")
 
 ##########
-test_probpool = prob.pool(suit.rst.stack, occurrences = occ.rst.stack, interaction.matrix = interaction.matrix, interaction.method = 1)
+test_probpool = prob.pool(env.pool = suit.rst.stack, 
+                          disp.pool = disp.rst.stack, 
+                          occurrences = occ.rst.stack,
+                          interaction.matrix = interaction.matrix, interaction.method = 1)
 
+summary(test_probpool)
+plot(test_probpool)
 
-par(mfrow = c(1,1))
-plot(test_probpool@pools$disp.pool[[5]])
-plot(test_probpool@pools$env.pool[[5]])
-plot(test_probpool@pools$prob.pool[[43]])
+test_probpool = prob.pool(env.pool = suit.rst.stack, 
+                          disp.pool = disp.rst.stack, 
+                          occurrences = occ.rst.stack,
+                          interaction.matrix = interaction.matrix, interaction.method = 2)
+
+summary(test_probpool)
+plot(test_probpool)
+
+test_probpool = prob.pool(occurrences = occ.rst.stack,
+                          interaction.matrix = interaction.matrix, interaction.method = 1)
+
+summary(test_probpool)
+plot(test_probpool)

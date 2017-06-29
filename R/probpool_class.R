@@ -1,10 +1,12 @@
 library(methods)
 library(raster)
+library(rasterVis)#
+library(poibin)
 
 ###################################################################
 # Probabilistic species pool class definition
 # author: Christian König
-# date:   March 2017
+# date:   June 2017
 #
 # current issues:
 # - no abundance support in occurrences data
@@ -80,19 +82,19 @@ prob.pool = function(env.pool = NULL, disp.pool = NULL, occurrences = NULL,
   
   # Create prob.pool object
   result = new("prob.pool", 
-               pools = list(env.pool = env.pool, 
+               pools = list(occurrences = occurrences,
+                            env.pool = env.pool, 
                             disp.pool = disp.pool, 
-                            occurrences = occurrences, 
                             prob.pool = prob.pool),
                interaction.matrix = interaction.matrix,
                interaction.method = c("Modification", "Multiplication", "None")[interaction.method],
                species.names = names(prob.pool),
                species.total = length(names(prob.pool)),
                species.mean = round(mean(raster::values(sum(prob.pool)), 1, na.rm = T)),
-               species.richness = list(env.pool = if(is.null(env.pool)){NA} else {sum(env.pool)},
-                          disp.pool = if(is.null(disp.pool)){NA} else {sum(disp.pool)},
-                          occurrences = if(is.null(occurrences)){NA} else {sum(occurrences)},
-                          prob.pool = sum(prob.pool)),
+               species.richness = list(occurrences = if(is.null(occurrences)){NA} else {sum(occurrences)},
+                                       env.pool = if(is.null(env.pool)){NA} else {sum(env.pool)}, 
+                                       disp.pool = if(is.null(disp.pool)){NA} else {sum(disp.pool)},
+                                       prob.pool = sum(prob.pool)),
                slots = c("pools","interaction.matrix","interaction.method", "species.names", "species.total", "species.mean", "species.richness"))
 }
 
@@ -139,101 +141,44 @@ calc.prob = function(probabilities, interaction.matrix, interaction.method){
 
 #####################################################################
 ######################### METHOD DEFINITIONS ########################
-setMethod("summary", "prob.pool",  function(object, ...){
+setMethod("summary", "prob.pool",  function(object){
   cat("Probabilistic species pool \n\n")
   cat(paste("Pools              : ", paste(names(which(!sapply(object@pools, is.null))), collapse = ", "), sep = ""), "\n")
-  cat(paste("Species (total)    : ", object@species.tot, "\n", sep = ""))
-  cat(paste("Species (avg/cell) : ", object@species.avg, "\n", sep = ""))
+  cat(paste("Species (total)    : ", object@species.total, "\n", sep = ""))
+  cat(paste("Species (avg/cell) : ", object@species.mean, "\n", sep = ""))
   cat(paste("Interaction method : ", object@interaction.method, "\n", sep = ""))
   cat(paste("Resolution         : ", paste(round(res(object@pools$prob.pool), 3), collapse = " x "), " (x,y)\n", sep = ""))
   cat(paste("Extent             : ", paste(round(object@pools$prob.pool@extent[1:4], 3), 
                                            collapse = ", "), " (xmin, xmax, ymin, ymax)", sep = ""))
 })
 
-setMethod("print", "prob.pool", function(object){
-  summary(object)
+setMethod("print", "prob.pool", function(x){
+  summary(x)
 })
 
 
-setMethod("plot", c("prob.pool"), function(object){
-  pools = !sapply(object@pools, is.null)
-  pools = pools[pools]
-  sapply(object@species.richness[which(pools)], function(x) range(values(x), na.rm = T))
-  
-  par(mfrow=c(1, length(pools)))
-  for(i in 1:length(pools))
-  sapply(object@pools[pools], FUN = function(x) raster::plot(sum(x)))
-  plot(sum(object@pools$env.pool))
-  
-  if(length(focalunit)==2)
-            {
-              par(mfrow=c(x@pool.count,3))
-              if(is.null(x@pools$disp.pool)==FALSE)
-              {
-                plotPoolProbs(x,"disp.pool",focalunit)
-                plotPoolPDF(x,"disp.pool",focalunit)
-                plotPoolCDF(x,"disp.pool",focalunit)
-              }
-              if(is.null(x@pools$env.pool)==FALSE)
-              {
-                plotPoolProbs(x,"env.pool",focalunit)
-                plotPoolPDF(x,"env.pool",focalunit)
-                plotPoolCDF(x,"env.pool",focalunit)
-              }
-              if(is.null(x@pools$bio.pool)==FALSE)
-              {
-                if(x@method=="simple_multiplication")
-                {
-                  plotPoolProbs(x,"bio.pool",focalunit)
-                  plotPoolPDF(x,"bio.pool",focalunit)
-                  plotPoolCDF(x,"bio.pool",focalunit)
-                }else{
-                  plotFacComp(x,"bio.pool",focalunit)
-                  plotPoolPDF(x,"bio.pool",focalunit)
-                  plotPoolCDF(x,"bio.pool",focalunit)
-                }
-              }
-              if(is.null(x@pools$comb.pool)==FALSE)
-              {
-                plotPoolProbs(x,"comb.pool",focalunit)
-                plotPoolPDF(x,"comb.pool",focalunit)
-                plotPoolCDF(x,"comb.pool",focalunit)
-              }
-            }else{
-              par(mfrow=c(1,x@pool.count))
-              if(is.null(x@PSI$env.pool)==FALSE)
-              {
-                plotRasterPool(x,"disp.pool")
-              }
-              if(is.null(x@PSI$env.pool)==FALSE)
-              {
-                plotRasterPool(x,"env.pool")
-              }
-              if(is.null(x@PSI$env.pool)==FALSE)
-              {
-                plotRasterPool(x,"bio.pool")
-              }
-              if(is.null(x@PSI$env.pool)==FALSE)
-              {
-                plotRasterPool(x,"comb.pool")
-              }
-            }
-          })
-
-# Function to plot pool for a single focal unit defined by focalunit
-plotPoolProbs<-function(prob.pool,pool,focalunit)
-{
-  focal<-cbind(focalunit[1],focalunit[2])
-  loc<-extract(prob.pool@pools[[pool]],focal, cellnumbers=TRUE)
-  barplot(rev(sort(prob.pool@pools[[pool]][loc[1]][1,])), ylim=c(0,1), ylab = "Probabilities", xlab= "Species", main = pool)
-}
+setMethod("plot", "prob.pool", function(x, species = NULL, focal.unit = NULL){
+  if(is.null(species) && is.null(focal.unit)){
+    color_theme <- rasterTheme(region = rev(terrain.colors(30)))
+    richness_maps = stack(x@species.richness[!is.na(x@species.richness)])
+    levelplot(richness_maps, par.settings = color_theme)
+  } else if(!is.null(species) && is.null(focal.unit)){
+    color_theme <- rasterTheme(region = rev(terrain.colors(30)))
+    richness_maps = stack(x@species.richness[!is.na(x@species.richness)])
+    levelplot(richness_maps, par.settings = color_theme)
+  } else if(is.null(species) && !is.null(focal.unit)){
+    focal.probs = extract(prob.pool@pools[[pool]], focal.unit)
+    barplot(dpoibin(1:prob.pool@species.total, focal.probs), names.arg = 1:prob.pool@species.total, ylab = "Probabilities", xlab= "Species", main = pool)
+    barplot(ppoibin(1:prob.pool@species.total, focal.probs), names.arg = 1:prob.pool@species.total, ylab = "Probabilities", xlab= "Species", main = pool)
+  } else {
+    stop("Please provide only one argument (species/focal.unit)")
+  }
+})
 
 # Function to plot pool probability density function
-plotPoolPDF<-function(prob.pool,pool,focalunit)
-{
-  focal<-cbind(focalunit[1],focalunit[2])
-  loc<-extract(prob.pool@pools[[pool]],focal, cellnumbers=TRUE)
-  barplot(dpoibin(seq(1,length(prob.pool@pools[[pool]][loc[1]][1,]),1), prob.pool@pools[[pool]][loc[1]][1,]), names.arg=1:length(prob.pool@pools[[pool]][loc[1]][1,]), ylab = "Probabilities", xlab= "Species", main = pool)
+prob.pool.PDF = function(prob.pool, pool, focal.unit){
+  focal.probs = extract(prob.pool@pools[[pool]], focal.unit)
+  barplot(ppoibin(1:prob.pool@species.total, focal.probs), names.arg = 1:prob.pool@species.total, ylab = "Probabilities", xlab= "Species", main = pool)
 }
 
 # Function to plot pool cumulative density function
@@ -241,7 +186,8 @@ plotPoolCDF<-function(prob.pool,pool,focalunit)
 {
   focal<-cbind(focalunit[1],focalunit[2])
   loc<-extract(prob.pool@pools[[pool]],focal, cellnumbers=TRUE)
-  barplot(ppoibin(seq(1,length(prob.pool@pools[[pool]][loc[1]][1,]),1), prob.pool@pools[[pool]][loc[1]][1,]), ylim=c(0,1), names.arg=1:length(prob.pool@pools[[pool]][loc[1]][1,]), ylab = "Probabilities", xlab= "Species", main = pool)
+  barplot(ppoibin(seq(1,length(prob.pool@pools[[pool]][loc[1]][1,]),1), prob.pool@pools[[pool]][loc[1]][1,]), ylim=c(0,1),
+          names.arg = prob.pool@species.names, ylab = "Probabilities", xlab= "Species", main = pool)
 }
 
 plotFacComp<-function(prob.pool,pool,focalunit)
