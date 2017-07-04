@@ -111,6 +111,10 @@ interaction.matrix = cooccur(spec_site, thresh = FALSE, spp_names = TRUE, only_e
 save(interaction.matrix, file = "data/Ranunculaceae_interactions.RData")
 
 ##########
+load(file = "data/Ranunculaceae_disp_prob.RData")
+load(file = "data/Ranunculaceae_bio_prob.RData")
+load(file = "data/Ranunculaceae_env_prob.RData")
+load(file = "data/Ranunculaceae_interactions.RData")
 test_probpool = prob.pool(env.pool = suit.rst.stack, 
                           disp.pool = disp.rst.stack, 
                           occurrences = occ.rst.stack,
@@ -118,6 +122,17 @@ test_probpool = prob.pool(env.pool = suit.rst.stack,
 
 summary(test_probpool)
 plot(test_probpool)
+plot(test_probpool, species = "Thal_simp")
+plot(test_probpool, focal.unit = c(1242,1241))
+
+test_probpool = prob.pool(env.pool = suit.rst.stack, 
+                          disp.pool = disp.rst.stack, 
+                          occurrences = occ.rst.stack,
+                          interaction.matrix = interaction.matrix, interaction.method = 2)
+
+summary(test_probpool)
+plot(test_probpool)
+
 
 test_probpool = prob.pool(env.pool = suit.rst.stack, 
                           disp.pool = disp.rst.stack, 
@@ -132,3 +147,5 @@ test_probpool = prob.pool(occurrences = occ.rst.stack,
 
 summary(test_probpool)
 plot(test_probpool)
+plot(test_probpool, species = "Thal_simp")
+plot(test_probpool, focal.unit = extent(c(7,8,49,53)))
