@@ -74,11 +74,11 @@ prob.pool = function(env.pool = NULL, disp.pool = NULL, occurrences = NULL,
       occurrences = calc(occurrences, function(x){x[x>1] = 1; x}) # Convert abundance to occurrence
       n.total = dim(occurrences)[3]
       n.mean = mean(raster::values(sum(occurrences)), na.rm = T)
+      base.prob = n.mean/n.total
       prob.pool.raw = calc(occurrences, function(x){ # Assign uniform distribution to raster
-        x[!is.na(x)] = n.mean/n.total
-        return(x)
+        x[!is.na(x)] = base.prob
       }) 
-      prob.pool = calc.prob(prob.pool.raw, interaction.matrix, interaction.method) #, occurrences)
+      prob.pool = calc.prob(prob.pool.raw, interaction.matrix, interaction.method, occurrences)
     }
   } 
   
@@ -112,32 +112,34 @@ multiply.pools = function(env.pool, disp.pool){
   }
 }
 
-calc.prob = function(probabilities, interaction.matrix, interaction.method){
-  if(interaction.method == 2){
-    warning("Caution: Results are not interpretable as probabilities using this interaction.method.")
-  }
-  
-  modify = function(probability, interaction){
-    if(is.na(probability) | is.na(interaction)){return(NA)}
-    if(interaction > 0){return(probability + (1-probability) * interaction)}
-    if(interaction <= 0){return(probability + (probability * interaction))}
-  }
-  
+calc.prob = function(probabilities, interaction.matrix, interaction.method, occurrences){
   interaction.matrix = as.matrix(interaction.matrix) # in case of dist object being provided
-  prob.pool = calc(probabilities, function(prob.cell){
-    interaction = sapply(1:length(prob.cell), function(species.index){ 
-      prob.cell * interaction.matrix[,species.index]
+  if(exists("occurrences")){
+    tmp.probs = occurrences
+  } else {
+    tmp.probs = probabilities
+  }
+  
+  # Create "interaction pool"
+  interaction.pool = calc(tmp.probs, function(prob.cell){
+    sapply(1:length(prob.cell), function(species.index){
+      prob.cell[species.index] * mean((prob.cell * interaction.matrix[,species.index]))
     })
-    interaction = rowMeans(interaction)
-    if(interaction.method == 1){
-      prob.cell.new = mapply(modify, prob.cell, interaction)
-    } else if(interaction.method == 2){
-      interaction = (interaction + 1) / 2
-      prob.cell.new = species.cell * interaction
-    }
-    return(prob.cell.new)
   })
-  return(prob.pool)
+  
+  # Calculate prob.pool
+  if(interaction.method == 1){
+    int.pos = calc(interaction.pool, fun = function(x){x[x <= 0] = 0; x})
+    int.neg = calc(interaction.pool, fun = function(x){x[x > 0] = 0; x})
+    probabilities = probabilities + (1-probabilities) * int.pos # positive interactions
+    probabilities = probabilities + (probabilities * int.neg) # negative interactions
+  } else if(interaction.method == 2){
+    stop("not implemented")
+    interaction = (interaction + 1) / 2
+    prob.cell.new = species.cell * interaction
+  }
+  
+  return(probabilities)
 }
 
 #####################################################################
