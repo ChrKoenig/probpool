@@ -65,7 +65,7 @@ prob.pool = function(env.pool = NULL, disp.pool = NULL, occurrences = NULL,
   prob.pool = NULL
   if(is.null(interaction.matrix) && (!is.null(env.pool) || !is.null(disp.pool))){ # No interactions, multiply env * disp
     prob.pool = multiply.pools(env.pool, disp.pool)
-    interaction.method = 3
+    interaction.method = NA
   } else { # Interactions present
     if(!is.null(env.pool) || !is.null(disp.pool)){ # Base probabilities from env/disp layer
       prob.pool.raw = multiply.pools(env.pool, disp.pool)
@@ -78,18 +78,17 @@ prob.pool = function(env.pool = NULL, disp.pool = NULL, occurrences = NULL,
         x[!is.na(x)] = n.mean/n.total
         return(x)
       }) 
-      prob.pool = calc.prob(prob.pool.raw, interaction.matrix, interaction.method)
+      prob.pool = calc.prob(prob.pool.raw, interaction.matrix, interaction.method) #, occurrences)
     }
   } 
   
+  # Create prob.pool object
   pools = list(occurrences = occurrences,
                env.pool = env.pool, 
                disp.pool = disp.pool, 
                prob.pool = prob.pool)
   pools = pools[!sapply(pools, is.null)] # remove empty pools
   species.richness = lapply(pools, FUN = function(x) sum(x))
-  
-  # Create prob.pool object
   result = new("prob.pool", 
                pools = pools,
                interaction.matrix = interaction.matrix,
@@ -114,8 +113,6 @@ multiply.pools = function(env.pool, disp.pool){
 }
 
 calc.prob = function(probabilities, interaction.matrix, interaction.method){
-  interaction.matrix = as.matrix(interaction.matrix) # in case of dist object being provided
-  
   if(interaction.method == 2){
     warning("Caution: Results are not interpretable as probabilities using this interaction.method.")
   }
@@ -126,6 +123,7 @@ calc.prob = function(probabilities, interaction.matrix, interaction.method){
     if(interaction <= 0){return(probability + (probability * interaction))}
   }
   
+  interaction.matrix = as.matrix(interaction.matrix) # in case of dist object being provided
   prob.pool = calc(probabilities, function(prob.cell){
     interaction = sapply(1:length(prob.cell), function(species.index){ 
       prob.cell * interaction.matrix[,species.index]
