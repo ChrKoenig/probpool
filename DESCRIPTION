@@ -1,0 +1,27 @@
+Package: probpool
+Title: An implementation of probabilistic species pools.
+Version: 0.0.0.9000
+Authors@R: c(
+	person("Christian", "König", email = "chr.koenig@outlook.com", role = c("aut", "cre")),
+	person("Dirk", "Karger", role = c("aut")),
+	person("Weigelt", "Patric", role = c("aut")),
+	person("Brody", "Sandel", role = c("aut")),
+	person("Juliano", "Sarmento Cabral", role = c("ctr"))
+	)
+Description: This package implements probabilistic species pools as outlined in Karger et al. (2016).
+Depends: R (>= 3.3.1)
+License: GPL-3
+Encoding: UTF-8
+LazyData: true
+Imports:
+	methods,
+    raster,
+    rasterVis,
+	latticeExtra,
+	poibin,
+	reshape2,
+	gdistance
+Suggests:
+	cooccur,
+    knitr
+RoxygenNote: 6.0.1
