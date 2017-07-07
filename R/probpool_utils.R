@@ -37,36 +37,36 @@ mult_pools = function(pool1, pool2){
   }
 }
 
-calc_prob = function(probabilities, interaction.matrix, interaction.method, occurrences = NULL){
-  interaction.matrix = as.matrix(interaction.matrix) # in case of dist object being provided
+calc_prob = function(probabilities, interaction_matrix, interaction_method, occurrences = NULL){
+  interaction_matrix = as.matrix(interaction_matrix) # in case of dist object being provided
   if(!is.null(occurrences)){
-    tmp.probs = occurrences # Only exists when no env/disp pool present --> calc interactions from occurrences
+    tmp_probss = occurrences # Only exists when no env/disp pool present --> calc interactions from occurrences
   } else {
-    tmp.probs = probabilities # calc interactions from probabilities
+    tmp_probss = probabilities # calc interactions from probabilities
   }
   
   # Create "interaction pool"
-  interaction.pool = calc(tmp.probs, function(prob.cell){
-    sapply(1:length(prob.cell), function(species.index){
-      prob.cell[species.index] * mean((prob.cell * interaction.matrix[,species.index]))
+  interaction_pool = raster::calc(tmp_probss, function(prob_cell){
+    sapply(1:length(prob_cell), function(species_index){
+      prob_cell[species_index] * mean((prob_cell * interaction_matrix[,species_index]))
     })
   })
   
   # Calculate prob.pool
-  if(interaction.method == 1){
-    int.pos = calc(interaction.pool, fun = function(x){x[x <= 0] = NA; x}) # only positive local interactions
-    int.neg = calc(interaction.pool, fun = function(x){x[x > 0] = NA; x})  # only negative local interactions
-    for(i in 1:nlayers(probabilities)){
+  if(interaction_method == 1){
+    int_pos = raster::calc(interaction_pool, fun = function(x){x[x <= 0] = NA; x}) # only positive local interactions
+    int_neg = raster::calc(interaction_pool, fun = function(x){x[x > 0] = NA; x})  # only negative local interactions
+    for(i in 1:raster::nlayers(probabilities)){
       tmp = probabilities[[i]]
-      tmp.pos = tmp + (1-tmp) * int.pos[[i]]
-      tmp.neg = tmp + (tmp * int.neg[[i]])
-      tmp[!is.na(tmp.pos)] = tmp.pos[!is.na(tmp.pos)] 
-      tmp[!is.na(tmp.neg)] = tmp.neg[!is.na(tmp.neg)]
+      tmp_pos = tmp + (1-tmp) * int_pos[[i]]
+      tmp_neg = tmp + (tmp * int_neg[[i]])
+      tmp[!is.na(tmp_pos)] = tmp_pos[!is.na(tmp_pos)] 
+      tmp[!is.na(tmp_neg)] = tmp_neg[!is.na(tmp_neg)]
       probabilities[[i]] = tmp
     }
-  } else if(interaction.method == 2){
+  } else if(interaction_method == 2){
     warning("This interaction method is outdated. Results are not interpretable as probabilies anymore")
-    probabilities = probabilities * ((interaction.pool + 1) / 2)
+    probabilities = probabilities * ((interaction_pool + 1) / 2)
   }
   return(probabilities)
 }
@@ -142,9 +142,9 @@ allE = function(occupancy,environment=NULL, method){
 # occurence.surfaces needs to be a raster stack including rasters of species occurences or abundances with values of 0 for absences and values > 0 for occurances. Values wil be scaled to range from 0 to 1
 # # or the disp.pool, the env.pool or the product of both
 # 
-# # interaction.matrix is a species by species matrix (may be asymmetric) with interactions assumed to be directed from the species in the row to the species in the colums
+# # interaction_matrix is a species by species matrix (may be asymmetric) with interactions assumed to be directed from the species in the row to the species in the colums
 # 
-# bio_pool <- function(occurrences, interaction.matrix, abundance=TRUE) {
+# bio_pool <- function(occurrences, interaction_matrix, abundance=TRUE) {
 #   occurrences <- values(occurences)
 #   occurrences <- occurrences[complete.cases(occurrences),]
 #   
@@ -157,7 +157,7 @@ allE = function(occupancy,environment=NULL, method){
 #   # multiply the incoming interactions of each species x (columns in int.matrix)
 #   # with the occurrence/probability of all other species for the given site y
 #   interactions <- lapply(1:dim(occurences)[3], function(x) {
-#     interactions.x <- t(sapply(1:nrow(occurrences), function(y) occurrences[y,] * interaction.matrix[,x]))
+#     interactions.x <- t(sapply(1:nrow(occurrences), function(y) occurrences[y,] * interaction_matrix[,x]))
 #     interactions.x <- rowMeans(interactions.x)
 #     interactions.x.rst <- occurences[[x]]
 #     interactions.x.rst[!is.na(interactions.x.rst)] <- interactions.x

@@ -47,7 +47,6 @@ disp.pool <- function(occurrence.surfaces, disp.ability, method=c("negexp","fatt
         distances <- commuteDistance(spec.trans, occurrences[,c(1:2)])/2
         distances <- as.matrix(distances)
       }
-      
       dispersal.x <- sapply(1:nrow(occurrences), function(y) calcD(occurrences[,x+2],distances[,y], ifelse(length(disp.ability)==1,disp.ability,disp.ability[x]), method = method[1]))  # check 5000
       dispersal.x.rst <- occurrence.surfaces[[x]]
       dispersal.x.rst[!is.na(dispersal.x.rst)] <- dispersal.x

@@ -1,4 +1,8 @@
 ######################### CLASS DEFINITION ########################
+#' @import methods
+#' @import raster
+NULL
+
 #' Class "Prob_pool"
 #' 
 #' Core class of the \code{probpool} package. An object of class Prob_pool contains 
@@ -14,8 +18,8 @@
 #' @examples test_probpool = prob_pool(env_pool = env, 
 #'  disp_pool = disp, occurrences = occ, interaction_matrix = int, interaction_method = 1)
 setClass("Probpool",
-         slots = list(pools = "list", 
-                      interaction_matrix = "ANY", 
+         slots = c(pools = "list", 
+                      interaction_matrix = "ANY", # can be empty
                       interaction_method = "character",
                       species_names = "character",
                       species_total = "numeric",
@@ -25,7 +29,6 @@ setClass("Probpool",
                   validity = prob_pool_check)
 
 # Constructor function
-#' @export
 probpool = function(env_pool = NULL, disp_pool = NULL, occurrences = NULL,
                      interaction_matrix = NULL, interaction_method = 1){
   prob_pool = NULL
@@ -34,18 +37,18 @@ probpool = function(env_pool = NULL, disp_pool = NULL, occurrences = NULL,
     interaction_method = 3
   } else { # Interactions present
     if(!is.null(env_pool) || !is.null(disp_pool)){ # Base probabilities from env/disp layer
-      prob_pool.raw = mult_pools(env_pool, disp_pool)
-      prob_pool = calc_prob(prob_pool.raw, interaction_matrix, interaction_method)
+      prob_pool_raw = mult_pools(env_pool, disp_pool)
+      prob_pool = calc_prob(prob_pool_raw, interaction_matrix, interaction_method)
     } else { # Estimate base probabilities from occurence layer
       occurrences = raster::calc(occurrences, function(x){x[x>1] = 1; x}) # Convert abundance to occurrence
       n.total = raster::nlayers(occurrences)
       n.mean = mean(raster::values(sum(occurrences)), na.rm = T)
       base.prob = n.mean/n.total
-      prob_pool.raw = raster::calc(occurrences, function(x){ # Assign uniform distribution to raster
+      prob_pool_raw = raster::calc(occurrences, function(x){ # Assign uniform distribution to raster
         x[!is.na(x)] = base.prob
         return(x)
       }) 
-      prob_pool = calc_prob(prob_pool.raw, interaction_matrix, interaction_method, occurrences)
+      prob_pool = calc_prob(prob_pool_raw, interaction_matrix, interaction_method, occurrences)
     }
   } 
   
@@ -70,7 +73,7 @@ probpool = function(env_pool = NULL, disp_pool = NULL, occurrences = NULL,
 #####################################################################
 ######################### METHOD DEFINITIONS ########################
 # print
-setMethod("print", "Probpool", function(x){
+setMethod(f = "print", signature = "Probpool", definition =  function(x){
   cat("Probabilistic species pool \n\n")
   cat(paste("Pools              : ", paste(names(x@pools), collapse = ", "), sep = ""), "\n")
   cat(paste("Species (total)    : ", x@species_total, "\n", sep = ""))
@@ -106,34 +109,11 @@ setMethod("summary", "Probpool",  function(object){
 #' @param x An object of class \code{Probpool}
 #' @return A \code{list} of properties of \code{object}
 #' @export
-summary <- function(x) UseMethod("summary")
+summary <- function(x) UseMethod("summary", x)
 
 #-------------------------------------------------------------------------------------------
 # plot
-#' Plot a Probpool object. 
-#' 
-#' Method to plot and visualize a \code{Probpool} object. Depending on the arguments provided, different plotting behaviour (see Details). Additional parameters are passed to the  the '...' argument
-#'
-#' @param x An object of class \code{Probpool}
-#' @param focal.species The name of a particular species in x. If provided, probability pools for that ...
-#' @param focal.unit An object comapatible with the \code{\link[raster]{raster::extract}} function, i.e 
-#' \itemize{
-#'   \item points represented by a two-column matrix or data.frame
-#'   \item a numeric vector representing cell numbers
-#'   \item a SpatialPoints*; SpatialPolygons*; SpatialLines object
-#'   \item an \code{\link[raster]{raster::Extent}} object
-#' }
-#' @param ... Additional arguments for \code{\link[lattice]{lattice::levelplot}} or \code{\link[lattice]{lattice::xyplot}}
-#' @return None
-#' @examples
-#' my_prob_pool = prob_pool(env_pool = env, disp_pool = disp)
-#' plot(my_prob_pool)
-#' plot(my_prob_pool, focal.species = "Olea europaea")
-#' plot(my_prob_pool, focal.unit = 132)) # Cell number
-#' plot(my_prob_pool, focal.unit = c(24,26))) # Cell index
-#' plot(my_prob_pool, focal.unit = extent(c(7,8,49,53))) # Object of class raster::Extent
-#' @export
-setMethod("plot", "Probpool", function(x, focal.species = NULL, focal.unit = NULL, ...){
+setMethod("plot", "Probpool", function(x, focal_species = NULL, focal_unit = NULL, ...){
   par_old = par()
   on.exit(par(par_old))
   moreargs = eval(substitute(list(...)))
@@ -165,5 +145,27 @@ setMethod("plot", "Probpool", function(x, focal.species = NULL, focal.unit = NUL
   }
 })
 
-
-#plot = function(x, focal.species = NULL, focal.unit = NULL, ...) UseMethod("plot")
+#' Plot a Probpool object. 
+#' 
+#' Method to plot and visualize a \code{Probpool} object. Depending on the arguments provided, different plotting behaviour (see Details). Additional parameters are passed to the  the '...' argument
+#'
+#' @param x An object of class \code{Probpool}
+#' @param focal.species The name of a particular species in x. If provided, probability pools for that ...
+#' @param focal.unit An object comapatible with the \code{\link[raster]{raster::extract}} function, i.e 
+#' \itemize{
+#'   \item points represented by a two-column matrix or data.frame
+#'   \item a numeric vector representing cell numbers
+#'   \item a SpatialPoints*; SpatialPolygons*; SpatialLines object
+#'   \item an \code{\link[raster]{raster::Extent}} object
+#' }
+#' @param ... Additional arguments for \code{\link[lattice]{lattice::levelplot}} or \code{\link[lattice]{lattice::xyplot}}
+#' @return None
+#' @examples
+#' my_prob_pool = prob_pool(env_pool = env, disp_pool = disp)
+#' plot(my_prob_pool)
+#' plot(my_prob_pool, focal.species = "Olea europaea")
+#' plot(my_prob_pool, focal.unit = 132)) # Cell number
+#' plot(my_prob_pool, focal.unit = c(24,26))) # Cell index
+#' plot(my_prob_pool, focal.unit = extent(c(7,8,49,53))) # Object of class raster::Extent
+#' @export
+plot = function(x, focal_species = NULL, focal_unit = NULL, ...) UseMethod("plot")

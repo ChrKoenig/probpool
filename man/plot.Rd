@@ -4,10 +4,12 @@
 \alias{plot}
 \title{Plot a Probpool object.}
 \usage{
-plot(x, focal.species = NULL, focal.unit = NULL, ...)
+plot(x, focal_species = NULL, focal_unit = NULL, ...)
 }
 \arguments{
 \item{x}{An object of class \code{Probpool}}
+
+\item{...}{Additional arguments for \code{\link[lattice]{lattice::levelplot}} or \code{\link[lattice]{lattice::xyplot}}}
 
 \item{focal.species}{The name of a particular species in x. If provided, probability pools for that ...}
 
@@ -18,8 +20,6 @@ plot(x, focal.species = NULL, focal.unit = NULL, ...)
   \item a SpatialPoints*; SpatialPolygons*; SpatialLines object
   \item an \code{\link[raster]{raster::Extent}} object
 }}
-
-\item{...}{Additional arguments for \code{\link[lattice]{lattice::levelplot}} or \code{\link[lattice]{lattice::xyplot}}}
 }
 \value{
 None

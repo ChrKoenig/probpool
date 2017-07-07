@@ -17,15 +17,16 @@
 load(file = "data/Ranunculaceae_disp_prob.RData")
 load(file = "data/Ranunculaceae_bio_prob.RData")
 load(file = "data/Ranunculaceae_env_prob.RData")
-load(file = "data/Ranunculaceae_interactions.RData")
+load(file = "data/Ranunculaceae_occurrences.RData")
+load(file = "data/Ranunculaceae_interaction_matrix.RData")
 test_probpool = probpool(env_pool = suit.rst.stack,
                           disp_pool = disp.rst.stack,
                           occurrences = occ.rst.stack,
                           interaction_matrix = interaction_matrix, interaction_method = 1)
-
+print(test_probpool)
 summary(test_probpool)
-plot(test_probpool)
-# plot(test_probpool, species = "Thal_simp")
+class(test_probpool)
+plot(test_probpool, species = "Thal_simp")
 # plot(test_probpool, focal.unit = c(1242,1241))
 # 
 # test_probpool = probpool(env_pool = suit.rst.stack,
