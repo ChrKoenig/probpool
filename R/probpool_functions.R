@@ -1,3 +1,5 @@
+#####################################################################
+########################## HELPER FUNCTIONS #########################
 # Validity check function
 prob_pool_check = function(object){
   if(all(sapply(object@pools, is.null))){ 
@@ -26,20 +28,17 @@ prob_pool_check = function(object){
   return(TRUE)
 }
 
-
-#####################################################################
-########################## HELPER FUNCTIONS #########################
-multiply.pools = function(env.pool, disp.pool){
-  if(is.null(env.pool)){
-    return(disp.pool)
-  } else if(is.null(disp.pool)){
-    return(env.pool)
+mult_pools = function(pool1, pool2){
+  if(is.null(pool1)){
+    return(pool2)
+  } else if(is.null(pool2)){
+    return(pool1)
   } else {
-    return(env.pool * disp.pool)
+    return(pool1 * pool2)
   }
 }
 
-calc.prob = function(probabilities, interaction.matrix, interaction.method, occurrences = NULL){
+calc_prob = function(probabilities, interaction.matrix, interaction.method, occurrences = NULL){
   interaction.matrix = as.matrix(interaction.matrix) # in case of dist object being provided
   if(!is.null(occurrences)){
     tmp.probs = occurrences # Only exists when no env/disp pool present --> calc interactions from occurrences
@@ -191,16 +190,12 @@ calcE = function(occupancy, envdist,site)
   return(es)
 }
 
-allE = function(occupancy,environment=NULL, method)
-{
-  if(method == "mindist")
-  {
+allE = function(occupancy,environment=NULL, method){
+  if(method == "mindist"){
     dists = as.matrix(dist(environment))
     Pe = sapply(1:ncol(occupancy),function(i){sapply(1:nrow(occupancy), function(j){calcE(d[,i],dists,j)})})
   }
-  if(method == "beals")
-  {
-    require(vegan)
+  if(method == "beals"){
     Pe = beals(occupancy)	
   }
   return(Pe)

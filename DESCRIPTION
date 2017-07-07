@@ -14,13 +14,15 @@ License: GPL-3
 Encoding: UTF-8
 LazyData: true
 Imports:
+	sp
 	methods,
     raster,
     rasterVis,
 	latticeExtra,
 	poibin,
 	reshape2,
-	gdistance
+	gdistance,
+	vegan
 Suggests:
 	cooccur,
     knitr

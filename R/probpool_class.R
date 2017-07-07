@@ -22,9 +22,7 @@ setClass("Probpool",
                    "species_mean",
                    "species_richness",
                    "slots"),
-         validity = prob_pool_check
-         )
-
+         validity = prob_pool_check)
 
 # Constructor function
 probpool = function(env_pool = NULL, disp_pool = NULL, occurrences = NULL,
@@ -36,7 +34,7 @@ probpool = function(env_pool = NULL, disp_pool = NULL, occurrences = NULL,
   } else { # Interactions present
     if(!is.null(env_pool) || !is.null(disp_pool)){ # Base probabilities from env/disp layer
       prob_pool.raw = mult_pools(env_pool, disp_pool)
-      prob_pool = calc.prob(prob_pool.raw, interaction_matrix, interaction_method)
+      prob_pool = calc_prob(prob_pool.raw, interaction_matrix, interaction_method)
     } else { # Estimate base probabilities from occurence layer
       occurrences = calc(occurrences, function(x){x[x>1] = 1; x}) # Convert abundance to occurrence
       n.total = nlayers(occurrences)
@@ -46,7 +44,7 @@ probpool = function(env_pool = NULL, disp_pool = NULL, occurrences = NULL,
         x[!is.na(x)] = base.prob
         return(x)
       }) 
-      prob_pool = calc.prob(prob_pool.raw, interaction_matrix, interaction_method, occurrences)
+      prob_pool = calc_prob(prob_pool.raw, interaction_matrix, interaction_method, occurrences)
     }
   } 
   
@@ -65,7 +63,7 @@ probpool = function(env_pool = NULL, disp_pool = NULL, occurrences = NULL,
                species_total = length(names(prob_pool)),
                species_mean = round(mean(raster::values(sum(prob_pool)), 1, na.rm = T)),
                species_richness = species_richness,
-               slots = c("pools","interaction_matrix","interaction_method", "species_names", "species_total", "species_mean", "species_richness"))
+               slots = c("pools","interaction_matrix","interaction_method", "species_names", "species_total", "species_mean", "species_richness", "slots"))
 }
 
 #####################################################################
@@ -73,21 +71,22 @@ probpool = function(env_pool = NULL, disp_pool = NULL, occurrences = NULL,
 # print
 setMethod("print", "Probpool", function(x){
   cat("Probabilistic species pool \n\n")
-  cat(paste("Pools              : ", paste(names(object@pools), collapse = ", "), sep = ""), "\n")
-  cat(paste("Species (total)    : ", object@species_total, "\n", sep = ""))
-  cat(paste("Species (mean)     : ", object@species_mean, "\n", sep = ""))
-  cat(paste("Interaction method : ", object@interaction_method, "\n", sep = ""))
-  cat(paste("Resolution         : ", paste(round(res(object@pools$prob_pool), 3), collapse = " x "), " (x,y)\n", sep = ""))
-  cat(paste("Extent             : ", paste(round(object@pools$prob_pool@extent[1:4], 3), 
+  cat(paste("Pools              : ", paste(names(x@pools), collapse = ", "), sep = ""), "\n")
+  cat(paste("Species (total)    : ", x@species_total, "\n", sep = ""))
+  cat(paste("Species (mean)     : ", x@species_mean, "\n", sep = ""))
+  cat(paste("Interaction method : ", x@interaction_method, "\n", sep = ""))
+  cat(paste("Resolution         : ", paste(round(res(x@pools$prob_pool), 3), collapse = " x "), " (x,y)\n", sep = ""))
+  cat(paste("Extent             : ", paste(round(x@pools$prob_pool@extent[1:4], 3), 
                                            collapse = ", "), " (xmin, xmax, ymin, ymax)", sep = ""))
   return(NULL)
 })
 #' @rdname summary
-print = function(x) UseMethod("print")
+print = function(x) UseMethod("print", x)
 
 #-------------------------------------------------------------------------------------------
 # summary 
 setMethod("summary", "Probpool",  function(object){
+  print("!AFAPSF")
   print(object)
   smry = list(pools = paste(names(object@pools), collapse = ", "),
        species_total = object@species_total,
