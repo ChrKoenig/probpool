@@ -1,5 +1,6 @@
 #' @include probpool_class.R
 #' @include probpool_function.R
+#' @include probpool_utils
 NULL
 
 rm(list=ls())

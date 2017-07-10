@@ -18,7 +18,7 @@ NULL
 #' @param interaction_method A number specifying the method used for incorporating species interacitons in the calculation of the probabilistic species pool. (see details)
 #' @return A raster stack containing species-specific probabilities of occurrence
 #' @seealso \code{\link{Probpool}}
-#' #' @export
+#' @export
 probpool = function(env_pool = NULL, disp_pool = NULL, occurrences = NULL,
                     interaction_matrix = NULL, interaction_method = 1){
   prob_pool = NULL
