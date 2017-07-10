@@ -21,9 +21,9 @@ example_probpool = probpool(env_pool = example1_env,
 class(example_probpool)
 print(example_probpool)
 summary(example_probpool)
-plot(example_probpool)
-plot(example_probpool, species = "Thal_simp")
-plot(example_probpool, focal.unit = c(1242,1241))
+plot.probpool(example_probpool)
+plot(example_probpool, focal_species = "Thal_simp")
+plot(example_probpool, focal_unit = c(1242,1241))
 # 
 # test_probpool = probpool(env_pool = suit.rst.stack,
 #                           disp_pool = disp.rst.stack,

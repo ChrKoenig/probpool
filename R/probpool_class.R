@@ -140,5 +140,5 @@ plot.probpool = function(x, focal_species = NULL, focal_unit = NULL, ...){
   }
 }
 setMethod("plot",
-          signature(x = "Probpool"),
+          signature(x = "Probpool", focal_species = "ANY"),
           function(x){plot.probpool(x)})
