@@ -50,7 +50,7 @@ print.probpool = function(x){
 }
 setMethod("print",
           "Probpool",
-          function(x){print.Probpool(x)})
+          function(x){print.probpool(x)})
 
 #' @rdname summary
 #' @export
@@ -59,7 +59,7 @@ show.probpool = function(x){
 }
 setMethod("show",
           "Probpool",
-          function(object){show.Probpool(object)})
+          function(object){show.probpool(object)})
 
 #-------------------------------------------------------------------------------------------
 #' Summarize a Probpool object.
@@ -81,7 +81,7 @@ summary.probpool = function(object){
 }
 setMethod("summary",
           "Probpool",
-          function(object){summary.Probpool(object)})
+          function(object){summary.probpool(object)})
 
 #-------------------------------------------------------------------------------------------
 #' Plot a Probpool object. 
