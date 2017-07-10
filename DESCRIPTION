@@ -28,6 +28,7 @@ Suggests:
     knitr
 RoxygenNote: 6.0.1
 Collate: 
-    'probpool_utils.R'
+    'data.R'
+    'utils.R'
     'probpool_class.R'
-    'probpool_functions.R'
+    'functions.R'

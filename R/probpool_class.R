@@ -3,7 +3,7 @@
 #' @import raster
 NULL
 
-#' @include probpool_utils.R
+#' @include utils.R
 NULL
 
 #' Class "Prob_pool"

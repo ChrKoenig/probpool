@@ -15,11 +15,10 @@ rm(list=ls())
 # save(interaction_matrix, file = "data/Ranunculaceae_interaction_matrix.RData")
 # 
 ##########
-load(file = "data/Ranunculaceae_disp_prob.RData")
-load(file = "data/Ranunculaceae_bio_prob.RData")
-load(file = "data/Ranunculaceae_env_prob.RData")
-load(file = "data/Ranunculaceae_occurrences.RData")
-load(file = "data/Ranunculaceae_interaction_matrix.RData")
+# load(file = "data/Ranunculaceae_bio_prob.RData")
+# load(file = "data/Ranunculaceae_env_prob.RData")
+# load(file = "data/Ranunculaceae_occurrences.RData")
+# load(file = "data/Ranunculaceae_interaction_matrix.RData")
 test_probpool = probpool(env_pool = suit.rst.stack,
                           disp_pool = disp.rst.stack,
                           occurrences = occ.rst.stack,
