@@ -40,15 +40,15 @@ mult_pools = function(pool1, pool2){
 calc_prob = function(probabilities, interaction_matrix, interaction_method, occurrences = NULL){
   interaction_matrix = as.matrix(interaction_matrix) # in case of dist object being provided
   if(!is.null(occurrences)){
-    tmp_probss = occurrences # Only exists when no env/disp pool present --> calc interactions from occurrences
+    tmp_probs = occurrences # Only exists when no env/disp pool present --> calc interactions based on occurrences
   } else {
-    tmp_probss = probabilities # calc interactions from probabilities
+    tmp_probs = probabilities # calculate interactions based on probabilities
   }
   
   # Create "interaction pool"
-  interaction_pool = raster::calc(tmp_probss, function(prob_cell){
+  interaction_pool = raster::calc(tmp_probs, fun = function(prob_cell){
     sapply(1:length(prob_cell), function(species_index){
-      prob_cell[species_index] * mean((prob_cell * interaction_matrix[,species_index]))
+      prob_cell[species_index] = mean((prob_cell * interaction_matrix[,species_index]))
     })
   })
   

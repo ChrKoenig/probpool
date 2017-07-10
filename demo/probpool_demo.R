@@ -1,9 +1,9 @@
-# ####-------------------------- Test Code -----------------------------####
-# library(plyr)
-# library(raster)
-# library(cooccur)
-# rm(list=ls())
-# 
+#' @include probpool_class.R
+#' @include probpool_function.R
+NULL
+
+rm(list=ls())
+ 
 # # create interaction matrix
 # load("data/Ranunculaceae_occurrences.RData")
 # spec_site = adply(names(occ.rst.stack), 1, .fun = function(name){values(occ.rst.stack[[name]])}, .id = NULL)
@@ -13,7 +13,7 @@
 #                              eff_matrix = TRUE) # takes > 10 minutes
 # save(interaction_matrix, file = "data/Ranunculaceae_interaction_matrix.RData")
 # 
-# ##########
+##########
 load(file = "data/Ranunculaceae_disp_prob.RData")
 load(file = "data/Ranunculaceae_bio_prob.RData")
 load(file = "data/Ranunculaceae_env_prob.RData")
@@ -24,9 +24,9 @@ test_probpool = probpool(env_pool = suit.rst.stack,
                           occurrences = occ.rst.stack,
                           interaction_matrix = interaction_matrix, interaction_method = 1)
 print(test_probpool)
-summary(test_probpool)
-class(test_probpool)
-plot(test_probpool, species = "Thal_simp")
+# summary(test_probpool)
+# class(test_probpool)
+# plot(test_probpool, species = "Thal_simp")
 # plot(test_probpool, focal.unit = c(1242,1241))
 # 
 # test_probpool = probpool(env_pool = suit.rst.stack,

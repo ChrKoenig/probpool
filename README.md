@@ -1,2 +1,2 @@
-# SpeciesPool
-Git project for sDiv workshop on probabilistic species pool
+# probpool
+An R implementation of probabilistic species pools

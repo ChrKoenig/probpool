@@ -27,3 +27,7 @@ Suggests:
 	cooccur,
     knitr
 RoxygenNote: 6.0.1
+Collate: 
+    'probpool_utils.R'
+    'probpool_class.R'
+    'probpool_functions.R'
