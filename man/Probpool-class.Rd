@@ -3,9 +3,9 @@
 \docType{class}
 \name{Probpool-class}
 \alias{Probpool-class}
-\title{Class "Prob_pool"}
+\title{"Prob_pool" Class definition}
 \description{
-Core class of the \code{probpool} package. An object of class Prob_pool contains
+Core class of the \code{probpool} package.
 }
 \section{Slots}{
 

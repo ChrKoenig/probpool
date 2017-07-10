@@ -6,9 +6,9 @@ NULL
 #' @include utils.R
 NULL
 
-#' Class "Prob_pool"
+#' "Prob_pool" Class definition
 #' 
-#' Core class of the \code{probpool} package. An object of class Prob_pool contains 
+#' Core class of the \code{probpool} package.
 #' 
 #' @slot "pools" Rasterbrick objects, containing 
 #' @slot "interaction_matrix" A species by species matrix (may be asymmetric) with interactions directed from the species in the row to the species in the colums,
@@ -34,7 +34,9 @@ setValidity("Probpool", prob_pool_check)
 
 #####################################################################
 ######################### METHOD DEFINITIONS ########################
-print.Probpool = function(x){
+#' @rdname summary
+#' @export
+print.probpool = function(x){
   cat("Probabilistic species pool \n\n")
   cat(paste("Pools              : ", paste(names(x@pools), collapse = ", "), sep = ""), "\n")
   cat(paste("Species (total)    : ", x@species_total, "\n", sep = ""))
@@ -46,21 +48,28 @@ print.Probpool = function(x){
                                            collapse = ", "), " (xmin, xmax, ymin, ymax)", sep = ""))
   return(NULL)
 }
-
-#' @rdname summary
-#' @export
 setMethod("print",
           "Probpool",
           function(x){print.Probpool(x)})
 
 #' @rdname summary
 #' @export
+show.probpool = function(x){
+  print.probpool(x)
+}
 setMethod("show",
           "Probpool",
-          function(object){print.Probpool(object)})
+          function(object){show.Probpool(object)})
 
 #-------------------------------------------------------------------------------------------
-summary.Probpool = function(object){
+#' Summarize a Probpool object.
+#' 
+#' Summary functions for an object of class Probpool. Prints and returns a \code{list} of properties for an object of class \code{Probpool}
+#' 
+#' @param x An object of class \code{Probpool}
+#' @return A \code{list} of properties of \code{object}
+#' @export
+summary.probpool = function(object){
   smry = list(pools = names(object@pools),
               species_total = object@species_total,
               species_mean =  object@species_mean,
@@ -70,16 +79,6 @@ summary.Probpool = function(object){
   )
   return(smry)
 }
-
-#' Summary, Print, Show
-#' 
-#' Summary functions for an object of class Probpool
-#' 
-#' Prints and returns a \code{list} of properties for an object of class \code{Probpool}
-#' 
-#' @param x An object of class \code{Probpool}
-#' @return A \code{list} of properties of \code{object}
-#' @export
 setMethod("summary",
           "Probpool",
           function(object){summary.Probpool(object)})
@@ -101,14 +100,14 @@ setMethod("summary",
 #' @param ... Additional arguments for \code{\link[lattice]{lattice::levelplot}} or \code{\link[lattice]{lattice::xyplot}}
 #' @return None
 #' @examples
-#' my_prob_pool = prob_pool(env_pool = env, disp_pool = disp)
+#' my_prob_pool = probpool(env_pool = env, disp_pool = disp)
 #' plot(my_prob_pool)
 #' plot(my_prob_pool, focal_species = "Olea europaea")
 #' plot(my_prob_pool, focal_unit = 132)) # Cell number
 #' plot(my_prob_pool, focal_unit = c(24,26))) # Cell index
 #' plot(my_prob_pool, focal_unit = extent(c(7,8,49,53))) # Object of class raster::Extent
 #' @export
-plot.Probpool = function(x, focal_species = NULL, focal_unit = NULL, ...){
+plot.probpool = function(x, focal_species = NULL, focal_unit = NULL, ...){
   par_old = par()
   on.exit(suppressWarnings(par(par_old)))
   moreargs = eval(substitute(list(...)))
@@ -140,7 +139,6 @@ plot.Probpool = function(x, focal_species = NULL, focal_unit = NULL, ...){
     stop("Please provide only one argument (species/focal_unit)")
   }
 }
-
 setMethod("plot",
           signature(x = "Probpool"),
-          function(x){plot.Probpool(x)})
+          function(x){plot.probpool(x)})
