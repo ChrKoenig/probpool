@@ -69,7 +69,7 @@ setMethod("show",
 #' @param x An object of class \code{Probpool}
 #' @return A \code{list} of properties of \code{object}
 #' @export
-summary.probpool = function(object){
+summary.probpool = function(object,...){
   smry = list(pools = names(object@pools),
               species_total = object@species_total,
               species_mean =  object@species_mean,
@@ -81,7 +81,7 @@ summary.probpool = function(object){
 }
 setMethod("summary",
           "Probpool",
-          function(object){summary.probpool(object)})
+          function(object,...){summary.probpool(object,...)})
 
 #-------------------------------------------------------------------------------------------
 #' Plot a Probpool object. 
@@ -140,5 +140,5 @@ plot.probpool = function(x, focal_species = NULL, focal_unit = NULL, ...){
   }
 }
 setMethod("plot",
-          signature(x = "Probpool", focal_species = "ANY"),
+          signature(x = "Probpool"),
           function(x){plot.probpool(x)})
