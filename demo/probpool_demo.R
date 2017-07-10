@@ -13,20 +13,17 @@ NULL
 # save(interaction_matrix, file = "data/Ranunculaceae_interaction_matrix.RData")
 # 
 ##########
-# load(file = "data/Ranunculaceae_bio_prob.RData")
-# load(file = "data/Ranunculaceae_env_prob.RData")
-# load(file = "data/Ranunculaceae_occurrences.RData")
-# load(file = "data/Ranunculaceae_interaction_matrix.RData")
-test_probpool = probpool(env_pool = example1_env,
+message("calculating probpool from example data")
+example_probpool = probpool(env_pool = example1_env,
                           disp_pool = example1_disp,
                           occurrences = example1_occ,
                           interaction_matrix = example1_int, interaction_method = 1)
-class(test_probpool)
-print(test_probpool)
-summary(test_probpool)
-plot(test_probpool)
-plot(test_probpool, species = "Thal_simp")
-plot(test_probpool, focal.unit = c(1242,1241))
+class(example_probpool)
+print(example_probpool)
+summary(example_probpool)
+plot(example_probpool)
+plot(example_probpool, species = "Thal_simp")
+plot(example_probpool, focal.unit = c(1242,1241))
 # 
 # test_probpool = probpool(env_pool = suit.rst.stack,
 #                           disp_pool = disp.rst.stack,

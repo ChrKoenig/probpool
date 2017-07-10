@@ -22,13 +22,13 @@ NULL
 #'  disp_pool = disp, occurrences = occ, interaction_matrix = int, interaction_method = 1)
 setClass("Probpool",
          slots = c(pools = "list", 
-                      interaction_matrix = "ANY", # can be empty
-                      interaction_method = "character",
-                      species_names = "character",
-                      species_total = "numeric",
-                      species_mean = "numeric",
-                      species_richness = "list",
-                      slots = "character"))
+                   interaction_matrix = "ANY", # can be empty
+                   interaction_method = "character",
+                   species_names = "character",
+                   species_total = "numeric",
+                   species_mean = "numeric",
+                   species_richness = "list",
+                   slots = "character"))
 
 setValidity("Probpool", prob_pool_check)
 
@@ -74,7 +74,7 @@ summary.probpool = function(object){
               species_total = object@species_total,
               species_mean =  object@species_mean,
               interaction_method = object@interaction_method,
-              resolution = round(res(object@pools$prob_pool), 3),
+              resolution = round(raster::res(object@pools$prob_pool), 3),
               extent = round(object@pools$prob_pool@extent[1:4], 3)
   )
   return(smry)
@@ -134,7 +134,7 @@ plot.probpool = function(x, focal_species = NULL, focal_unit = NULL, ...){
     
     focal_all = rbind(focal_pdf, focal_cdf)
     do.call(lattice::xyplot, c(x = formula(value ~ Var1 | factor(Var2) + factor(type)), 
-                                         data = quote(focal_all), type = quote("l"), moreargs))
+                               data = quote(focal_all), type = quote("l"), moreargs))
   } else {
     stop("Please provide only one argument (species/focal_unit)")
   }
