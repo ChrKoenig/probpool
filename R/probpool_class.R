@@ -46,6 +46,7 @@ print.probpool = function(x){
                                            collapse = ", "), " (xmin, xmax, ymin, ymax)", sep = ""))
   return(NULL)
 }
+setGeneric("print")
 #' @rdname summary
 #' @export
 setMethod("print",
@@ -55,6 +56,7 @@ setMethod("print",
 show.probpool = function(object){
   print.probpool(object)
 }
+setGeneric("show")
 #' @rdname summary
 #' @export
 setMethod("show",
@@ -71,7 +73,7 @@ summary.probpool = function(object,...){
   )
   return(smry)
 }
-
+setGeneric("summary")
 #' Summarize a Probpool object.
 #' 
 #' Summary functions for an object of class Probpool. Prints and returns a \code{list} of properties for an object of class \code{Probpool}
@@ -84,29 +86,6 @@ setMethod("summary",
           function(object,...){summary.probpool(object,...)})
 
 #-------------------------------------------------------------------------------------------
-#' Plot a Probpool object. 
-#' 
-#' Method to plot and visualize a \code{Probpool} object. Depending on the arguments provided, different plotting behaviour (see Details). Additional parameters are passed to the  the '...' argument
-#'
-#' @param x An object of class \code{Probpool}
-#' @param focal_species The name of a particular species in x. If provided, probability pools for that ...
-#' @param focal_unit An object comapatible with the \code{\link[raster]{raster::extract}} function, i.e 
-#' \itemize{
-#'   \item points represented by a two-column matrix or data.frame
-#'   \item a numeric vector representing cell numbers
-#'   \item a SpatialPoints*; SpatialPolygons*; SpatialLines object
-#'   \item an \code{\link[raster]{raster::Extent}} object
-#' }
-#' @param ... Additional arguments for \code{\link[lattice]{lattice::levelplot}} or \code{\link[lattice]{lattice::xyplot}}
-#' @return None
-#' @examples
-#' my_prob_pool = probpool(env_pool = env, disp_pool = disp)
-#' plot(my_prob_pool)
-#' plot(my_prob_pool, focal_species = "Olea europaea")
-#' plot(my_prob_pool, focal_unit = 132)) # Cell number
-#' plot(my_prob_pool, focal_unit = c(24,26))) # Cell index
-#' plot(my_prob_pool, focal_unit = extent(c(7,8,49,53))) # Object of class raster::Extent
-#' @export
 plot.probpool = function(x, focal_species = NULL, focal_unit = NULL, ...){
   par_old = par()
   on.exit(suppressWarnings(par(par_old)))
@@ -139,6 +118,30 @@ plot.probpool = function(x, focal_species = NULL, focal_unit = NULL, ...){
     stop("Please provide only one argument (species/focal_unit)")
   }
 }
+setGeneric("summary")
+#' Plot a Probpool object. 
+#' 
+#' Method to plot and visualize a \code{Probpool} object. Depending on the arguments provided, different plotting behaviour (see Details). Additional parameters are passed to the  the '...' argument
+#'
+#' @param x An object of class \code{Probpool}
+#' @param focal_species The name of a particular species in x. If provided, probability pools for that ...
+#' @param focal_unit An object comapatible with the \code{\link[raster]{raster::extract}} function, i.e 
+#' \itemize{
+#'   \item points represented by a two-column matrix or data.frame
+#'   \item a numeric vector representing cell numbers
+#'   \item a SpatialPoints*; SpatialPolygons*; SpatialLines object
+#'   \item an \code{\link[raster]{raster::Extent}} object
+#' }
+#' @param ... Additional arguments for \code{\link[lattice]{lattice::levelplot}} or \code{\link[lattice]{lattice::xyplot}}
+#' @return None
+#' @examples
+#' my_prob_pool = probpool(env_pool = env, disp_pool = disp)
+#' plot(my_prob_pool)
+#' plot(my_prob_pool, focal_species = "Olea europaea")
+#' plot(my_prob_pool, focal_unit = 132)) # Cell number
+#' plot(my_prob_pool, focal_unit = c(24,26))) # Cell index
+#' plot(my_prob_pool, focal_unit = extent(c(7,8,49,53))) # Object of class raster::Extent
+#' @export
 setMethod("plot",
           signature(x = "Probpool"),
-          function(x){plot.probpool(x)})
+          function(x,...){plot.probpool(x,...)})

@@ -13,6 +13,7 @@ NULL
 # save(interaction_matrix, file = "data/Ranunculaceae_interaction_matrix.RData")
 # 
 ##########
+library(probpool)
 message("calculating probpool from example data")
 example_probpool = probpool(env_pool = example1_env,
                           disp_pool = example1_disp,
@@ -22,9 +23,10 @@ class(example_probpool)
 print(example_probpool)
 show(example_probpool)
 summary(example_probpool)
-plot(example_probpool)
+plot(example_probpool, main = "HALLO")
 plot(example_probpool, focal_species = "Thal_simp")
 plot(example_probpool, focal_unit = c(1242,1241))
+
 # 
 # test_probpool = probpool(env_pool = suit.rst.stack,
 #                           disp_pool = disp.rst.stack,
