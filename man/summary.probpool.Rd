@@ -4,7 +4,7 @@
 \alias{summary.probpool}
 \title{Summarize a Probpool object.}
 \usage{
-summary.probpool(object)
+summary.probpool(object, ...)
 }
 \arguments{
 \item{x}{An object of class \code{Probpool}}

@@ -58,6 +58,8 @@ probpool = function(env_pool = NULL, disp_pool = NULL, occurrences = NULL,
                species_mean = round(mean(raster::values(sum(prob_pool)), 1, na.rm = T)),
                species_richness = species_richness,
                slots = c("pools","interaction_matrix","interaction_method", "species_names", "species_total", "species_mean", "species_richness", "slots"))
+  class(result) = "Probpool"
+  return(result)
 }
 
 #' Create a probabilistic dispersal pool
