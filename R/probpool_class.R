@@ -49,19 +49,18 @@ print.probpool = function(x){
   return(NULL)
 }
 setMethod("print",
-          "Probpool",
+          signature(x = "Probpool"),
           function(x){print.probpool(x)})
 
 #' @rdname summary
 #' @export
-show.probpool = function(x){
-  print.probpool(x)
+show.probpool = function(object){
+  print.probpool(object)
 }
 setMethod("show",
-          "Probpool",
+          signature(object = "Probpool"),
           function(object){show.probpool(object)})
 
-#-------------------------------------------------------------------------------------------
 #' Summarize a Probpool object.
 #' 
 #' Summary functions for an object of class Probpool. Prints and returns a \code{list} of properties for an object of class \code{Probpool}
@@ -69,7 +68,7 @@ setMethod("show",
 #' @param x An object of class \code{Probpool}
 #' @return A \code{list} of properties of \code{object}
 #' @export
-summary.probpool = function(object,...){
+summary.probpool = function(object){
   smry = list(pools = names(object@pools),
               species_total = object@species_total,
               species_mean =  object@species_mean,
@@ -80,8 +79,8 @@ summary.probpool = function(object,...){
   return(smry)
 }
 setMethod("summary",
-          "Probpool",
-          function(object,...){summary.probpool(object,...)})
+          signature(object = "Probpool"),
+          function(object){summary.probpool(object)})
 
 #-------------------------------------------------------------------------------------------
 #' Plot a Probpool object. 

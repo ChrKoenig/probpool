@@ -20,8 +20,9 @@ example_probpool = probpool(env_pool = example1_env,
                           interaction_matrix = example1_int, interaction_method = 1)
 class(example_probpool)
 print(example_probpool)
+show(example_probpool)
 summary(example_probpool)
-plot.probpool(example_probpool)
+plot(example_probpool)
 plot(example_probpool, focal_species = "Thal_simp")
 plot(example_probpool, focal_unit = c(1242,1241))
 # 
