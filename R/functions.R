@@ -6,18 +6,22 @@ NULL
 
 
 #########################################
-# Constructor function for class Probpool
-#' Create a probabilistic species pool
+# Constructor function for Probpool
+#' Create a Probpool object
 #' 
-#' Description goes here
+#' Constructor function for class \code{Probpool}
+#' 
+#' [DETAILS GO HERE]
 #' 
 #' @param env_pool A Raster* object containing environmental probabilities
 #' @param disp_pool A Raster* object containing dispersal probabilies
 #' @param occurences A Raster* object containing occurrence data for individual species. Each species is represented by a binary RasterLayer, where cell values of 0 indicate absence and 1 indicates presence. 
 #' @param interaction_matrix An interaction matrix
 #' @param interaction_method A number specifying the method used for incorporating species interacitons in the calculation of the probabilistic species pool. (see details)
-#' @return A raster stack containing species-specific probabilities of occurrence
-#' @seealso \code{\link{Probpool}}
+#' @return An object of class \code{Probpool}
+#' @seealso \code{\link{disppool}}, \code{\link{Probpool-class}}
+#' @references Karger, D. N. et al. (2016), Delineating probabilistic species pools in ecology and biogeography. Global Ecology and Biogeography, 25: 489-501. doi:10.1111/geb.12422
+#' @examples example_probpool = probpool(env_pool = example1_env, disp_pool = example1_disp)
 #' @export
 probpool = function(env_pool = NULL, disp_pool = NULL, occurrences = NULL,
                     interaction_matrix = NULL, interaction_method = 1){
@@ -62,7 +66,11 @@ probpool = function(env_pool = NULL, disp_pool = NULL, occurrences = NULL,
   return(result)
 }
 
-#' Create a probabilistic dispersal pool
+#' Create a probabilistic dispersal pool.
+#' 
+#' Creates a RasterBrick of dispersal probabilities that can be used as argument in \code{\link{probpool}}.
+#' 
+#' [DETAILS GO HERE]
 #' 
 #' @param disp_ability A numeric vector of dispersal abilities. [WHAT IS THE UNIT HERE?]
 #' @param occurences A Raster* object containing occurrence data for individual species. Each species is represented by a binary RasterLayer, where cell values of 0 indicate absence and 1 indicates presence. 
@@ -71,7 +79,9 @@ probpool = function(env_pool = NULL, disp_pool = NULL, occurrences = NULL,
 #' @param longlat Logical. Should calculations be based on long/lat?
 #' @return A raster stack containing species-specific probabilities of dispersal from areas of occurrence to a certain raster cell within a given time frame.
 #' @seealso \code{\link{probpool}}
-#' #' @export
+#' @references Tamme, R., Götzenberger, L., Zobel, M., Bullock, J. M., Hooftman, D. A. P., Kaasik, A. and Pärtel, M. (2014), Predicting species' maximum dispersal distances from simple plant traits. Ecology, 95: 505–513. doi:10.1890/13-1000.1
+#' @examples [EXAMPLE GOES HERE]
+#' @export
 disppool = function(disp_ability, occurrences, conductance, method=c("negexp","fattail"), longlat=TRUE) {
   # TODO: check extent of rasters, type of data etc.
   occurrences = raster::rasterToPoints(occurrence.surfaces)

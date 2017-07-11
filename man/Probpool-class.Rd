@@ -3,31 +3,33 @@
 \docType{class}
 \name{Probpool-class}
 \alias{Probpool-class}
-\title{"Prob_pool" Class definition}
+\title{Class \code{Probpool}}
 \description{
 Core class of the \code{probpool} package.
+}
+\details{
+[DETAILS GO HERE]
 }
 \section{Slots}{
 
 \describe{
-\item{\code{"pools"}}{Rasterbrick objects, containing}
+\item{\code{pools}}{Rasterbrick objects, containing}
 
-\item{\code{"interaction_matrix"}}{A species by species matrix (may be asymmetric) with interactions directed from the species in the row to the species in the colums,}
+\item{\code{interaction_matrix}}{A species by species matrix (may be asymmetric) with interactions directed from the species in the row to the species in the colums,}
 
-\item{\code{"interaction_method"}}{Method to be used for incorporating biotic interaction in the calculation of the probabilistic species pool}
+\item{\code{interaction_method}}{Method to be used for incorporating biotic interaction in the calculation of the probabilistic species pool}
 
-\item{\code{"species_names"}}{Names of species included in the Prob_pool}
+\item{\code{species_names}}{Names of species included in the Prob_pool}
 
-\item{\code{"species_total"}}{Total number of species included in the Prob_pool}
+\item{\code{species_total}}{Total number of species included in the Prob_pool}
 
-\item{\code{"species_mean"}}{Mean number of species per raster cell}
+\item{\code{species_mean}}{Mean number of species per raster cell}
 
-\item{\code{"species_richness"}}{Sum of Prob_pool@pools, representing the species richness of individual pools}
+\item{\code{species_richness}}{Sum of Prob_pool@pools, representing the species richness of individual pools}
 }}
 
-\examples{
-test_probpool = prob_pool(env_pool = env, 
- disp_pool = disp, occurrences = occ, interaction_matrix = int, interaction_method = 1)
+\references{
+Karger, D. N. et al. (2016), Delineating probabilistic species pools in ecology and biogeography. Global Ecology and Biogeography, 25: 489-501. doi:10.1111/geb.12422
 }
 \seealso{
 \code{\link{probpool}}

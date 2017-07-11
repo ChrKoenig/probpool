@@ -16,3 +16,6 @@ A \code{list} of properties of \code{object}
 \description{
 Summary functions for an object of class Probpool. Prints and returns a \code{list} of properties for an object of class \code{Probpool}
 }
+\details{
+[DETAILS GO HERE]
+}

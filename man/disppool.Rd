@@ -2,7 +2,7 @@
 % Please edit documentation in R/functions.R
 \name{disppool}
 \alias{disppool}
-\title{Create a probabilistic dispersal pool}
+\title{Create a probabilistic dispersal pool.}
 \usage{
 disppool(disp_ability, occurrences, conductance, method = c("negexp",
   "fattail"), longlat = TRUE)
@@ -22,9 +22,17 @@ disppool(disp_ability, occurrences, conductance, method = c("negexp",
 A raster stack containing species-specific probabilities of dispersal from areas of occurrence to a certain raster cell within a given time frame.
 }
 \description{
-Create a probabilistic dispersal pool
+Creates a RasterBrick of dispersal probabilities that can be used as argument in \code{\link{probpool}}.
+}
+\details{
+[DETAILS GO HERE]
+}
+\examples{
+[EXAMPLE GOES HERE]
+}
+\references{
+Tamme, R., Götzenberger, L., Zobel, M., Bullock, J. M., Hooftman, D. A. P., Kaasik, A. and Pärtel, M. (2014), Predicting species' maximum dispersal distances from simple plant traits. Ecology, 95: 505–513. doi:10.1890/13-1000.1
 }
 \seealso{
 \code{\link{probpool}}
-#' @export
 }

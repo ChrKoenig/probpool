@@ -10,16 +10,16 @@
 \arguments{
 \item{x}{An object of class \code{Probpool}}
 
-\item{...}{Additional arguments for \code{\link[lattice]{lattice::levelplot}} or \code{\link[lattice]{lattice::xyplot}}}
+\item{...}{Additional arguments for \code{\link[lattice]{levelplot}} or \code{\link[lattice]{xyplot}}}
 
 \item{focal_species}{The name of a particular species in x. If provided, probability pools for that ...}
 
-\item{focal_unit}{An object comapatible with the \code{\link[raster]{raster::extract}} function, i.e 
+\item{focal_unit}{An object comapatible with the \code{\link[raster]{extract}} function from the \pkg{raster} package, i.e:
 \itemize{
   \item points represented by a two-column matrix or data.frame
   \item a numeric vector representing cell numbers
   \item a SpatialPoints*; SpatialPolygons*; SpatialLines object
-  \item an \code{\link[raster]{raster::Extent}} object
+  \item an \code{\link[raster]{Extent}} object
 }}
 }
 \value{

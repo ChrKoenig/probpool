@@ -6,20 +6,21 @@ NULL
 #' @include utils.R
 NULL
 
-#' "Prob_pool" Class definition
+#' Class \code{Probpool}
 #' 
 #' Core class of the \code{probpool} package.
 #' 
-#' @slot "pools" Rasterbrick objects, containing 
-#' @slot "interaction_matrix" A species by species matrix (may be asymmetric) with interactions directed from the species in the row to the species in the colums,
-#' @slot "interaction_method" Method to be used for incorporating biotic interaction in the calculation of the probabilistic species pool
-#' @slot "species_names" Names of species included in the Prob_pool
-#' @slot "species_total" Total number of species included in the Prob_pool
-#' @slot "species_mean" Mean number of species per raster cell
-#' @slot "species_richness" Sum of Prob_pool@pools, representing the species richness of individual pools
+#' [DETAILS GO HERE]
+#' 
+#' @slot pools Rasterbrick objects, containing 
+#' @slot interaction_matrix A species by species matrix (may be asymmetric) with interactions directed from the species in the row to the species in the colums,
+#' @slot interaction_method Method to be used for incorporating biotic interaction in the calculation of the probabilistic species pool
+#' @slot species_names Names of species included in the Prob_pool
+#' @slot species_total Total number of species included in the Prob_pool
+#' @slot species_mean Mean number of species per raster cell
+#' @slot species_richness Sum of Prob_pool@pools, representing the species richness of individual pools
 #' @seealso \code{\link{probpool}}
-#' @examples test_probpool = prob_pool(env_pool = env, 
-#'  disp_pool = disp, occurrences = occ, interaction_matrix = int, interaction_method = 1)
+#' @references Karger, D. N. et al. (2016), Delineating probabilistic species pools in ecology and biogeography. Global Ecology and Biogeography, 25: 489-501. doi:10.1111/geb.12422
 setClass("Probpool",
          slots = c(pools = "list", 
                    interaction_matrix = "ANY", # can be empty
@@ -40,10 +41,8 @@ print.probpool = function(x){
   cat(paste("Species (total)    : ", x@species_total, "\n", sep = ""))
   cat(paste("Species (mean)     : ", x@species_mean, "\n", sep = ""))
   cat(paste("Interaction method : ", x@interaction_method, "\n", sep = ""))
-  cat(paste("Resolution         : ", paste(round(raster::res(x@pools$prob_pool), 3), collapse = " x "), " (x,y)\n", 
-            sep = ""))
-  cat(paste("Extent             : ", paste(round(x@pools$prob_pool@extent[1:4], 3), 
-                                           collapse = ", "), " (xmin, xmax, ymin, ymax)", sep = ""))
+  cat(paste("Resolution         : ", paste(round(raster::res(x@pools$prob_pool), 3), collapse = " x "), " (x,y)\n", sep = ""))
+  cat(paste("Extent             : ", paste(round(x@pools$prob_pool@extent[1:4], 3), collapse = ", "), " (xmin, xmax, ymin, ymax)", sep = ""))
   return(NULL)
 }
 setGeneric("print")
@@ -77,6 +76,8 @@ setGeneric("summary")
 #' Summarize a Probpool object.
 #' 
 #' Summary functions for an object of class Probpool. Prints and returns a \code{list} of properties for an object of class \code{Probpool}
+#' 
+#' [DETAILS GO HERE]
 #' 
 #' @param x An object of class \code{Probpool}
 #' @return A \code{list} of properties of \code{object}
@@ -118,21 +119,21 @@ plot.probpool = function(x, focal_species = NULL, focal_unit = NULL, ...){
     stop("Please provide only one argument (species/focal_unit)")
   }
 }
-setGeneric("summary")
+setGeneric("plot")
 #' Plot a Probpool object. 
 #' 
 #' Method to plot and visualize a \code{Probpool} object. Depending on the arguments provided, different plotting behaviour (see Details). Additional parameters are passed to the  the '...' argument
 #'
 #' @param x An object of class \code{Probpool}
 #' @param focal_species The name of a particular species in x. If provided, probability pools for that ...
-#' @param focal_unit An object comapatible with the \code{\link[raster]{raster::extract}} function, i.e 
+#' @param focal_unit An object comapatible with the \code{\link[raster]{extract}} function from the \pkg{raster} package, i.e:
 #' \itemize{
 #'   \item points represented by a two-column matrix or data.frame
 #'   \item a numeric vector representing cell numbers
 #'   \item a SpatialPoints*; SpatialPolygons*; SpatialLines object
-#'   \item an \code{\link[raster]{raster::Extent}} object
+#'   \item an \code{\link[raster]{Extent}} object
 #' }
-#' @param ... Additional arguments for \code{\link[lattice]{lattice::levelplot}} or \code{\link[lattice]{lattice::xyplot}}
+#' @param ... Additional arguments for \code{\link[lattice]{levelplot}} or \code{\link[lattice]{xyplot}}
 #' @return None
 #' @examples
 #' my_prob_pool = probpool(env_pool = env, disp_pool = disp)

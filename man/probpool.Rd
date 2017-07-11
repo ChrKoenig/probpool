@@ -2,7 +2,7 @@
 % Please edit documentation in R/functions.R
 \name{probpool}
 \alias{probpool}
-\title{Create a probabilistic species pool}
+\title{Create a Probpool object}
 \usage{
 probpool(env_pool = NULL, disp_pool = NULL, occurrences = NULL,
   interaction_matrix = NULL, interaction_method = 1)
@@ -19,11 +19,20 @@ probpool(env_pool = NULL, disp_pool = NULL, occurrences = NULL,
 \item{occurences}{A Raster* object containing occurrence data for individual species. Each species is represented by a binary RasterLayer, where cell values of 0 indicate absence and 1 indicates presence.}
 }
 \value{
-A raster stack containing species-specific probabilities of occurrence
+An object of class \code{Probpool}
 }
 \description{
-Description goes here
+Constructor function for class \code{Probpool}
+}
+\details{
+[DETAILS GO HERE]
+}
+\examples{
+example_probpool = probpool(env_pool = example1_env, disp_pool = example1_disp)
+}
+\references{
+Karger, D. N. et al. (2016), Delineating probabilistic species pools in ecology and biogeography. Global Ecology and Biogeography, 25: 489-501. doi:10.1111/geb.12422
 }
 \seealso{
-\code{\link{Probpool}}
+\code{\link{disppool}}, \code{\link{Probpool-class}}
 }

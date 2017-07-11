@@ -14,17 +14,18 @@ NULL
 # 
 ##########
 library(probpool)
+
 message("calculating probpool from example data")
-example_probpool = probpool(env_pool = example1_env,
-                          disp_pool = example1_disp,
-                          occurrences = example1_occ,
-                          interaction_matrix = example1_int, interaction_method = 1)
+example_probpool = probpool(env_pool = Ranunculaceae$Ran_env,
+                          disp_pool = Ranunculaceae$Ran_disp,
+                          occurrences = Ranunculaceae$Ran_occ,
+                          interaction_matrix = Ranunculaceae$Ran_int, interaction_method = 1)
 class(example_probpool)
 print(example_probpool)
 show(example_probpool)
 summary(example_probpool)
-plot(example_probpool, main = "HALLO")
-plot(example_probpool, focal_species = "Thal_simp")
+plot(example_probpool, main = "Ranunculaceae dataset")
+plot(example_probpool, focal_species = "Thal_simp", main = "Thalictrum simplex")
 plot(example_probpool, focal_unit = c(1242,1241))
 
 # 
