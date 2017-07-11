@@ -65,7 +65,7 @@ calc_prob = function(probabilities, interaction_matrix, interaction_method, occu
       probabilities[[i]] = tmp
     }
   } else if(interaction_method == 2){
-    warning("This interaction method is outdated. Results are not interpretable as probabilies anymore")
+    warning("This interaction method is deprecated. Results are not interpretable as probabilies anymore")
     probabilities = probabilities * ((interaction_pool + 1) / 2)
   }
   return(probabilities)
@@ -94,26 +94,17 @@ calcD = function(occupancy, distance, k, method = "negexp")
   return(distFunction(distance[index],k))
 }
 
-
-# occurence.surfaces needs to be a raster stack including rasters of species occurances or abundances with values of 0 for absences and values > 0 for occurances. Abundances are not considered though.
-
-# disp.ability needs to be a vector of dispersal abilities. Scaling range? Larger values = higher dispersal abilities
-
-# cond.surfaces needs to be a raster stack including rasters of conductance values between 0 and one
-# NAs will be replaced by 0 and 0s will be replaced by small value; set variable for this?
-
-
+##############################################
 # allD is a wrapper function for calcD that applies the calculation
 # of calcD to all cells and all species. It takes the full occupancy
 # matrix, the full pairwise distance matrix and a vector of each
 # species' dispersal ability. As with calcD, you specify the dispersal
 # function by specifying "method"
-allD = function(occupancy,distance,k,method = "negexp")
-{
+allD = function(occupancy,distance,k,method = "negexp"){
   Pd = sapply(1:ncol(occupancy),function(i){sapply(1:nrow(occupancy), function(j){calcD(occupancy[,i],distance[j,],k[i],method)})})
   return(Pd)
 }
-
+##############################################
 # allE is a function that calculates the environmental suitability
 # for all species across all sites. There are two methods available:
 # 1. consider the distance between a focal site and the closest (in 
@@ -136,34 +127,3 @@ allE = function(occupancy,environment=NULL, method){
   }
   return(Pe)
 }
-
-#TODO: Function to convert species by sites to raster stack
-
-# occurence.surfaces needs to be a raster stack including rasters of species occurences or abundances with values of 0 for absences and values > 0 for occurances. Values wil be scaled to range from 0 to 1
-# # or the disp.pool, the env.pool or the product of both
-# 
-# # interaction_matrix is a species by species matrix (may be asymmetric) with interactions assumed to be directed from the species in the row to the species in the colums
-# 
-# bio_pool <- function(occurrences, interaction_matrix, abundance=TRUE) {
-#   occurrences <- values(occurences)
-#   occurrences <- occurrences[complete.cases(occurrences),]
-#   
-#   if(abundance){ 
-#     occurrences <- occurrences/max(occurrences)
-#   } else {
-#     occurrences[occurrences > 0] <- 1 
-#   }
-#   
-#   # multiply the incoming interactions of each species x (columns in int.matrix)
-#   # with the occurrence/probability of all other species for the given site y
-#   interactions <- lapply(1:dim(occurences)[3], function(x) {
-#     interactions.x <- t(sapply(1:nrow(occurrences), function(y) occurrences[y,] * interaction_matrix[,x]))
-#     interactions.x <- rowMeans(interactions.x)
-#     interactions.x.rst <- occurences[[x]]
-#     interactions.x.rst[!is.na(interactions.x.rst)] <- interactions.x
-#     return(interactions.x.rst)
-#   })
-#   
-#   interactions <- stack(interactions)     
-#   return(interactions)
-# }
