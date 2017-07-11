@@ -6,7 +6,7 @@ Authors@R: c(
 	person("Dirk", "Karger", role = c("aut")),
 	person("Weigelt", "Patric", role = c("aut")),
 	person("Brody", "Sandel", role = c("aut")),
-	person("Juliano", "Sarmento Cabral", role = c("ctr"))
+	person("Juliano", "Sarmento Cabral", role = c("aut"))
 	)
 Description: This package implements probabilistic species pools as outlined in Karger et al. (2016): Delineating probabilistic species pools in ecology and biogeography. Global Ecology and Biogeography, 25: 489–501.
 Depends: R (>= 3.3.1)
