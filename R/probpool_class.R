@@ -34,8 +34,6 @@ setValidity("Probpool", prob_pool_check)
 
 #####################################################################
 ######################### METHOD DEFINITIONS ########################
-#' @rdname summary
-#' @export
 print.probpool = function(x){
   cat("Probabilistic species pool \n\n")
   cat(paste("Pools              : ", paste(names(x@pools), collapse = ", "), sep = ""), "\n")
@@ -48,26 +46,21 @@ print.probpool = function(x){
                                            collapse = ", "), " (xmin, xmax, ymin, ymax)", sep = ""))
   return(NULL)
 }
+#' @rdname summary
+#' @export
 setMethod("print",
           signature(x = "Probpool"),
           function(x){print.probpool(x)})
 
-#' @rdname summary
-#' @export
 show.probpool = function(object){
   print.probpool(object)
 }
+#' @rdname summary
+#' @export
 setMethod("show",
           signature(object = "Probpool"),
           function(object){show.probpool(object)})
 
-#' Summarize a Probpool object.
-#' 
-#' Summary functions for an object of class Probpool. Prints and returns a \code{list} of properties for an object of class \code{Probpool}
-#' 
-#' @param x An object of class \code{Probpool}
-#' @return A \code{list} of properties of \code{object}
-#' @export
 summary.probpool = function(object,...){
   smry = list(pools = names(object@pools),
               species_total = object@species_total,
@@ -78,6 +71,14 @@ summary.probpool = function(object,...){
   )
   return(smry)
 }
+
+#' Summarize a Probpool object.
+#' 
+#' Summary functions for an object of class Probpool. Prints and returns a \code{list} of properties for an object of class \code{Probpool}
+#' 
+#' @param x An object of class \code{Probpool}
+#' @return A \code{list} of properties of \code{object}
+#' @export
 setMethod("summary",
           signature(object = "Probpool"),
           function(object,...){summary.probpool(object,...)})
