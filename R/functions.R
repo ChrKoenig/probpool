@@ -82,7 +82,7 @@ probpool = function(env_pool = NULL, disp_pool = NULL, occurrences = NULL,
 #' @references Tamme, R., Götzenberger, L., Zobel, M., Bullock, J. M., Hooftman, D. A. P., Kaasik, A. and Pärtel, M. (2014), Predicting species' maximum dispersal distances from simple plant traits. Ecology, 95: 505–513. doi:10.1890/13-1000.1
 #' @examples [EXAMPLE GOES HERE]
 #' @export
-disppool = function(disp_ability, occurrences, conductance, method=c("negexp","fattail"), longlat=TRUE) {
+disppool = function(disp_ability, occurrence.surfaces, conductance=NULL, method=c("negexp","fattail"), longlat=TRUE) {
   # TODO: check extent of rasters, type of data etc.
   occurrences = raster::rasterToPoints(occurrence.surfaces)
   if (is.null(conductance)){
@@ -118,6 +118,6 @@ disppool = function(disp_ability, occurrences, conductance, method=c("negexp","f
       return(dispersal.x.rst)
     })
   }
-  dispersal = stack(dispersal)      
+  dispersal = raster::stack(dispersal)      
   return(dispersal)
 }
