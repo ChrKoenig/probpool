@@ -82,11 +82,39 @@ probpool = function(env_pool = NULL, disp_pool = NULL, occurrences = NULL,
 #' @references Tamme, R., Götzenberger, L., Zobel, M., Bullock, J. M., Hooftman, D. A. P., Kaasik, A. and Pärtel, M. (2014), Predicting species' maximum dispersal distances from simple plant traits. Ecology, 95: 505–513. doi:10.1890/13-1000.1
 #' @examples [EXAMPLE GOES HERE]
 #' @export
-disppool = function(disp_ability, occurrence.surfaces, conductance=NULL, method=c("negexp","fattail"), longlat=TRUE) {
-  # TODO: check extent of rasters, type of data etc.
+disppool = function(disp_ability, occurrence.surfaces, cost.surfaces=NULL, method=c("negexp","fattail"), longlat=TRUE, transitionFunction=function(x) 1/mean(x)) { # method only one attribute?
+  # TODO?: check extent of rasters, type of data etc.
+  
+  # Dispersal ability k is the distance a species can disperse in the given time frame
+  # If longlat = TRUE the unit for k is km, if longlat= FALSE it is the unit of the raster coordinate system (for example no of cells).
+  # If cost.surfaces or a single cost.surface are/is supplied, longlat is ignored and the output is scaled to no of cells, so k should be in number of cells.
+  
+  
+  # calcD is a function that calculates the 
+  # dispersal probabilities for a species to 
+  # all locations on the landscale from a focal
+  # cell. It takes a vector containing the species 
+  # presence/absence information, a vector containing
+  # the distances from a focal cell to others
+  # and a constant describing the species' dispersal
+  # ability. It returns a single probability value
+  # describing the chance of dispersing into that cell
+  # It allows two methods of calculating the 
+  # dispersal kernel (negative exponential 
+  # and fat-tailed)
+  
+  
+  calcD = function(occupancy, distance, k, method = "negexp")
+  {
+    index = which(occupancy > 0)
+    if(method == "negexp") {distFunction = function(d,k){1 - prod(1-exp(-1*d/k))}}
+    if(method == "fattail") {distFunction = function(d,k){1 - prod(1/d^k)}}
+    return(distFunction(distance[index],k))
+  }
+  
   occurrences = raster::rasterToPoints(occurrence.surfaces)
-  if (is.null(conductance)){
-    distances = spDists(occurrences[,c(1:2)], occurrences[,c(1:2)], longlat = longlat)
+  if (is.null(cost.surfaces)){
+    distances = sp::spDists(occurrences[,c(1:2)], occurrences[,c(1:2)], longlat = longlat)
     dispersal = lapply(1:dim(occurrence.surfaces)[3], function(x){
       dispersal.x = sapply(1:nrow(occurrences), function(y){
         calcD(occurrences[,x+2],distances[,y], ifelse(length(disp_ability)==1,disp_ability,disp_ability[x]), method = method[1])
@@ -95,24 +123,23 @@ disppool = function(disp_ability, occurrence.surfaces, conductance=NULL, method=
       dispersal.x.rst[!is.na(dispersal.x.rst)] = dispersal.x
       return(dispersal.x.rst)
     })
-  } else { # TODO add extra margin around conductance layers?
-    conductance[is.na(conductance) | conductance < 0.01] = 0.01 # Replace NAs and very small values (incl. 0) by 0.01
-    if (class(conductance)=="RasterLayer") {
-      spec.trans = gdistance::transition(conductance, mean, 8) # create transition raster
-      spec.trans = gdistance::geoCorrection(spec.trans, type="c")
-      distances = gdistance::commuteDistance(spec.trans, occurrences[,c(1:2)])/2 # calculate commute distances
+  } else { 
+    if (class(cost.surfaces)=="RasterLayer") {
+      spec.trans = gdistance::transition(cost.surfaces, transitionFunction, 8) # create transition raster
+      spec.trans = gdistance::geoCorrection(spec.trans, type="c", scl=TRUE)
+      distances = gdistance::costDistance(spec.trans, occurrences[,c(1:2)], occurrences[,c(1:2)]) # calculate cost distance
       distances = as.matrix(distances)
     }
     dispersal = lapply(1:dim(occurrence.surfaces)[3], function(x) {
-      if (class(conductance) %in% c("RasterStack","RasterBrick")){
-        spec.trans = transition(conductance[[x]], mean, 8) # create transition raster
-        spec.trans = geoCorrection(spec.trans, type="c")
-        distances = commuteDistance(spec.trans, occurrences[,c(1:2)])/2 # calculate commute distances
+      if (class(cost.surfaces) %in% c("RasterStack","RasterBrick")){
+        spec.trans = gdistance::transition(cost.surfaces[[x]], transitionFunction, 8) # create transition raster
+        spec.trans = gdistance::geoCorrection(spec.trans, type="c", scl=TRUE)
+        distances = gdistance::costDistance(spec.trans, occurrences[,c(1:2)], occurrences[,c(1:2)]) # calculate cost distance
         distances = as.matrix(distances)
       }
       dispersal.x = sapply(1:nrow(occurrences), function(y){
         calcD(occurrences[,x+2],distances[,y], ifelse(length(disp_ability)==1,disp_ability,disp_ability[x]), method = method[1])
-      })  # check 5000
+      })
       dispersal.x.rst = occurrence.surfaces[[x]]
       dispersal.x.rst[!is.na(dispersal.x.rst)] = dispersal.x
       return(dispersal.x.rst)
