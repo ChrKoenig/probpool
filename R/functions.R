@@ -73,10 +73,11 @@ probpool = function(env_pool = NULL, disp_pool = NULL, occurrences = NULL,
 #' [DETAILS GO HERE]
 #' 
 #' @param disp_ability A numeric vector of dispersal abilities. [WHAT IS THE UNIT HERE?]
-#' @param occurences A Raster* object containing occurrence data for individual species. Each species is represented by a binary RasterLayer, where cell values of 0 indicate absence and 1 indicates presence. 
-#' @param conductance Optional. A Raster* object representing landscape conductance for dispersal. Takes values between 0 and 1, where 0 indicates complete resistance (\eqn{P(dispersal to raster cell) = 0}) and 1 indicates complete conductance (\eqn{P(dispersal to raster cell) = p}). If a single RasterLayer is provided, the conductance matrix will be recycled for each species. 
+#' @param occurence.surfaces A Raster* object containing occurrence data for individual species. Each species is represented by a binary RasterLayer, where cell values of 0 indicate absence and 1 indicates presence. 
+#' @param cost.surfaces Optional. A Raster* object representing landscape conductance for dispersal. Takes values between 0 and 1, where 0 indicates complete resistance (\eqn{P(dispersal to raster cell) = 0}) and 1 indicates complete conductance (\eqn{P(dispersal to raster cell) = p}). If a single RasterLayer is provided, the conductance matrix will be recycled for each species. 
 #' @param method A number specifying the kernel used for estimating dispersal distance. (see details)
 #' @param longlat Logical. Should calculations be based on long/lat?
+#' @param transitionFunction Function. transitionFunction in gdistance::transition
 #' @return A raster stack containing species-specific probabilities of dispersal from areas of occurrence to a certain raster cell within a given time frame.
 #' @seealso \code{\link{probpool}}
 #' @references Tamme, R., Götzenberger, L., Zobel, M., Bullock, J. M., Hooftman, D. A. P., Kaasik, A. and Pärtel, M. (2014), Predicting species' maximum dispersal distances from simple plant traits. Ecology, 95: 505–513. doi:10.1890/13-1000.1
